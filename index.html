@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fuel Log">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fuel Log</title>
 <style>
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;background:#030712;color:#f9fafb;font-family:Arial,sans-serif}
-body{padding-bottom:50px}
+body{padding-bottom:60px}
 #hdr{background:#0f172a;border-bottom:1px solid #1f2937;padding:14px 14px 0;position:sticky;top:0;z-index:999}
 #hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
 #logo{font-size:26px;font-weight:900;letter-spacing:4px;color:#f9fafb}
@@ -37,8 +35,8 @@ body{padding-bottom:50px}
 .track{height:5px;background:#1f2937;border-radius:3px;overflow:hidden}
 .fill{height:100%;border-radius:3px}
 .mhdr{padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:11px}
-.micon{width:40px;height:40px;border-radius:10px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid #1f2937}
-.micon.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.3)}
+.micon{width:40px;height:40px;border-radius:10px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;border:1px solid #1f2937;color:#f9fafb}
+.micon.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.3);color:#4ade80}
 .mnm{font-size:17px;font-weight:800;letter-spacing:1px;color:#f9fafb}
 .mnm.done{color:#4ade80}
 .mtm{font-size:9px;color:#6b7280;margin-left:6px}
@@ -50,7 +48,7 @@ body{padding-bottom:50px}
 .mpf{height:100%}
 .dglow{box-shadow:0 0 0 1px rgba(74,222,128,.3);border-color:rgba(74,222,128,.25)!important;background:rgba(4,120,87,.08)!important}
 .item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-top:1px solid #111827;cursor:pointer}
-.item:active{background:rgba(255,255,255,.05)}
+.item:active,.item.tap{background:rgba(255,255,255,.05)}
 .item.tk{background:rgba(74,222,128,.04)}
 .chk{width:22px;height:22px;border-radius:50%;flex-shrink:0;border:2px solid #374151;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:transparent}
 .chk.on{border-color:#4ade80;background:#4ade80;color:#030712}
@@ -58,28 +56,28 @@ body{padding-bottom:50px}
 .inm.tk{color:#6b7280;text-decoration:line-through}
 .idt{font-size:10px;color:#4b5563;margin-top:1px}
 .stitle{font-size:13px;font-weight:800;letter-spacing:2px;color:#6b7280;margin-bottom:10px}
-.supp{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #111827;cursor:pointer}
+.supp{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #111827;cursor:pointer}
 .supp:first-of-type{border-top:none}
 .schk{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid #374151;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:transparent}
 .schk.on{border-color:#818cf8;background:#818cf8;color:#030712}
 .snm{font-size:12px;color:#d1d5db}
 .snm.done{color:#6b7280;text-decoration:line-through}
-.sdt{font-size:9px;color:#4b5563}
+.sdt{font-size:10px;color:#4b5563}
 .banner{padding:14px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);border-radius:12px;text-align:center;margin-top:12px}
 .btitle{font-size:18px;font-weight:900;letter-spacing:2px;color:#4ade80}
 .bsub{font-size:11px;color:#6b7280;margin-top:4px}
 .navrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.nbtn{width:36px;height:36px;border-radius:8px;border:1px solid #1f2937;background:#111827;color:#9ca3af;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.nbtn{width:44px;height:36px;border-radius:8px;border:1px solid #1f2937;background:#111827;color:#9ca3af;font-size:18px;cursor:pointer}
 .nbtn:disabled{color:#1f2937;background:#0a0f1a}
 .navc{text-align:center}
 .navd{font-size:16px;font-weight:800;letter-spacing:1px;color:#f9fafb}
 .navd.td{color:#4ade80}
 .navk{font-size:10px;color:#6b7280}
-.caltog{width:100%;padding:8px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#9ca3af;font-size:11px;cursor:pointer;letter-spacing:1px}
+.caltog{width:100%;padding:8px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#9ca3af;font-size:11px;cursor:pointer}
 .calwrap{background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:13px;margin-bottom:13px}
 .calh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.calm{font-size:14px;font-weight:800;letter-spacing:1px;color:#f9fafb}
-.calnb{width:28px;height:28px;border-radius:6px;border:1px solid #1f2937;background:#111827;color:#9ca3af;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.calm{font-size:14px;font-weight:800;color:#f9fafb}
+.calnb{width:36px;height:28px;border-radius:6px;border:1px solid #1f2937;background:#111827;color:#9ca3af;cursor:pointer;font-size:14px}
 .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .caldl{text-align:center;font-size:8px;color:#4b5563;padding-bottom:3px}
 .calday{aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;font-size:10px;color:#4b5563}
@@ -91,8 +89,7 @@ body{padding-bottom:50px}
 .legi{display:flex;align-items:center;gap:4px;font-size:8px;color:#6b7280}
 .legd{width:6px;height:6px;border-radius:50%}
 .empty{padding:28px;text-align:center}
-.eic{font-size:28px;margin-bottom:8px}
-.et{font-size:16px;font-weight:800;color:#4b5563;letter-spacing:1px}
+.et{font-size:16px;font-weight:800;color:#4b5563}
 .es{font-size:10px;color:#374151;margin-top:4px}
 .hrow{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #111827}
 .hrow:last-child{border-bottom:none}
@@ -113,70 +110,33 @@ body{padding-bottom:50px}
 .hc{aspect-ratio:1;border-radius:3px;cursor:pointer}
 .msrow{margin-bottom:9px}
 .msh{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px}
-.scrwrap{position:relative;flex-shrink:0}
-.scrinn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.srw{position:relative;flex-shrink:0}
+.sri{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 </style>
 </head>
 <body>
+
 <div id="hdr">
   <div id="hdr-top">
     <div><div id="logo">FUEL LOG</div><div id="hdate"></div></div>
     <div><div id="htime"></div><div id="hmeals"></div></div>
   </div>
   <div id="tabs">
-    <button class="tab on" onclick="showTab('today',this)">TODAY</button>
-    <button class="tab" onclick="showTab('history',this)">HISTORY</button>
-    <button class="tab" onclick="showTab('progress',this)">PROGRESS</button>
+    <button class="tab on" id="tab-today" onclick="ST('today')">TODAY</button>
+    <button class="tab" id="tab-history" onclick="ST('history')">HISTORY</button>
+    <button class="tab" id="tab-progress" onclick="ST('progress')">PROGRESS</button>
   </div>
 </div>
 <div class="page on" id="today"></div>
 <div class="page" id="history"></div>
 <div class="page" id="progress"></div>
 <script>
+var MEALS=[{"id": "breakfast", "label": "Breakfast", "icon": "B", "time": "Morning", "kcal": 920, "protein": 72, "carbs": 95, "fat": 24, "items": [{"n": "2 eggs + 1 egg white", "d": "whole eggs + white"}, {"n": "320 ml egg whites", "d": "liquid egg whites"}, {"n": "Halloumi", "d": "2 slices 40g"}, {"n": "Jam", "d": "20g"}, {"n": "Peanut butter", "d": "20g"}, {"n": "Bread", "d": "3 slices 90g"}, {"n": "Nestum rice", "d": "30g"}, {"n": "Kiwis", "d": "2 units"}]}, {"id": "lunch", "label": "Lunch", "icon": "L", "time": "Midday", "kcal": 870, "protein": 55, "carbs": 138, "fat": 8, "items": [{"n": "Broccoli", "d": "150g"}, {"n": "Chicken breast", "d": "150g"}, {"n": "Basmati rice cooked", "d": "400g"}, {"n": "Banana", "d": "1 unit"}]}, {"id": "snack", "label": "Snack", "icon": "S", "time": "Post-Training", "kcal": 870, "protein": 48, "carbs": 105, "fat": 30, "items": [{"n": "Chicken breast", "d": "150g"}, {"n": "Brazil nuts", "d": "3 units"}, {"n": "Walnuts", "d": "3 units"}, {"n": "Bananas", "d": "2 units"}, {"n": "Basmati rice cooked", "d": "150g"}]}, {"id": "dinner", "label": "Dinner", "icon": "D", "time": "Evening", "kcal": 830, "protein": 55, "carbs": 55, "fat": 32, "items": [{"n": "Greens", "d": "150g"}, {"n": "Chicken breast", "d": "150g"}, {"n": "Olive oil", "d": "2 tbsp"}, {"n": "Alpro Soy Yogurt", "d": "natural"}, {"n": "Red fruits", "d": "1 portion"}, {"n": "Mackerel in olive oil", "d": "1 can Auchan cavala"}, {"n": "Honey", "d": "1 tsp"}]}];
+var SUPPS=[{"n": "Morning Stack 1", "d": "Magnesium + Vitamin Complex + Glycine", "e": "M1"}, {"n": "Morning Drops", "d": "Vitamin D3 10000UI + Retinol + K2 MK7", "e": "MD"}, {"n": "Afternoon", "d": "Creatine + Omega-3 + Vitamin C", "e": "AF"}, {"n": "Late Night", "d": "Magnesium + Glycine", "e": "LN"}];
 
-var MEALS = [
-  {id:"breakfast",label:"Breakfast",emoji:"Breakfast",time:"Morning",kcal:920,protein:72,carbs:95,fat:24,items:[
-    {n:"2 eggs + 1 egg white",d:"whole eggs + white"},
-    {n:"320 ml egg whites",d:"liquid egg whites"},
-    {n:"Halloumi",d:"2 slices 40g"},
-    {n:"Jam",d:"20g"},
-    {n:"Peanut butter",d:"20g"},
-    {n:"Bread",d:"3 slices 90g"},
-    {n:"Nestum rice",d:"30g"},
-    {n:"Kiwis",d:"2 units"}
-  ]},
-  {id:"lunch",label:"Lunch",emoji:"Lunch",time:"Midday",kcal:870,protein:55,carbs:138,fat:8,items:[
-    {n:"Broccoli",d:"150g"},
-    {n:"Chicken breast",d:"150g"},
-    {n:"Basmati rice cooked",d:"400g"},
-    {n:"Banana",d:"1 unit"}
-  ]},
-  {id:"snack",label:"Snack",emoji:"Snack",time:"Post-Training",kcal:870,protein:48,carbs:105,fat:30,items:[
-    {n:"Chicken breast",d:"150g"},
-    {n:"Brazil nuts",d:"3 units"},
-    {n:"Walnuts",d:"3 units"},
-    {n:"Bananas",d:"2 units"},
-    {n:"Basmati rice cooked",d:"150g"}
-  ]},
-  {id:"dinner",label:"Dinner",emoji:"Dinner",time:"Evening",kcal:830,protein:55,carbs:55,fat:32,items:[
-    {n:"Greens",d:"150g"},
-    {n:"Chicken breast",d:"150g"},
-    {n:"Olive oil",d:"2 tbsp"},
-    {n:"Alpro Soy Yogurt",d:"natural"},
-    {n:"Red fruits",d:"1 portion"},
-    {n:"Mackerel in olive oil",d:"1 can Auchan cavala"},
-    {n:"Honey",d:"1 tsp"}
-  ]}
-];
-var SUPPS = [
-  {n:"Morning Stack 1",d:"Magnesium + Vitamin Complex + Glycine",e:"Morning"},
-  {n:"Morning Drops",d:"Vitamin D3 10000UI + Retinol + K2 MK7",e:"Drops"},
-  {n:"Afternoon",d:"Creatine + Omega-3 + Vitamin C",e:"Afternoon"},
-  {n:"Late Night",d:"Magnesium + Glycine",e:"Night"}
-];
-var TOT = {kcal:3490,p:230,c:393,f:94};
-var TC = MEALS.reduce(function(a,m){return a+m.items.length},0) + SUPPS.length;
-var EX=null, HD=tk(), SC=false, CM=new Date(), CT="today";
+var TOT={kcal:3490,p:230,c:393,f:94};
+var TC=MEALS.reduce(function(a,m){return a+m.items.length},0)+SUPPS.length;
+var EX=null,HD=tk(),SC=false,CM=new Date(),CT="today";
 
 function tk(){var n=new Date();return n.getFullYear()+"-"+p2(n.getMonth()+1)+"-"+p2(n.getDate())}
 function fk(d){return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())}
@@ -189,13 +149,16 @@ function md(meal,data){return meal.items.every(function(_,i){return data[meal.id
 function cons(data){return MEALS.reduce(function(a,m){if(md(m,data)){a.kcal+=m.kcal;a.p+=m.protein;a.c+=m.carbs;a.f+=m.fat}return a},{kcal:0,p:0,c:0,f:0})}
 
 function ring(pct,sz,sw,col){
-  var r=(sz-sw*2)/2, ci=2*Math.PI*r, da=(pct/100)*ci;
-  return "<svg width=\""+sz+"\" height=\""+sz+"\" style=\"transform:rotate(-90deg);display:block\"><circle cx=\""+sz/2+"\" cy=\""+sz/2+"\" r=\""+r+"\" fill=\"none\" stroke=\"#1f2937\" stroke-width=\""+sw+"\"/><circle cx=\""+sz/2+"\" cy=\""+sz/2+"\" r=\""+r+"\" fill=\"none\" stroke=\""+col+"\" stroke-width=\""+sw+"\" stroke-linecap=\"round\" stroke-dasharray=\""+da+" "+ci+"\"/></svg>";
+  var r=(sz-sw*2)/2,ci=2*Math.PI*r,da=(pct/100)*ci;
+  return ['<svg width="',sz,'" height="',sz,'" style="transform:rotate(-90deg);display:block">',
+    '<circle cx="',sz/2,'" cy="',sz/2,'" r="',r,'" fill="none" stroke="#1f2937" stroke-width="',sw,'"/>',
+    '<circle cx="',sz/2,'" cy="',sz/2,'" r="',r,'" fill="none" stroke="',col,'" stroke-width="',sw,'" stroke-linecap="round" stroke-dasharray="',da,' ',ci,'"/>',
+    '</svg>'].join("");
 }
 
 function mbar(lbl,val,max,col){
   var p=Math.min(val/max*100,100);
-  return "<div class=\"mbar\"><div class=\"mbar-h\"><span>"+lbl+"</span><span class=\"mbar-v\">"+val+"g</span></div><div class=\"track\"><div class=\"fill\" style=\"width:"+p+"%;background:"+col+"\"></div></div></div>";
+  return '<div class="mbar"><div class="mbar-h"><span>'+lbl+'</span><span class="mbar-v">'+val+'g</span></div><div class="track"><div class="fill" style="width:'+p+'%;background:'+col+'"></div></div></div>';
 }
 
 function streak(){
@@ -206,7 +169,7 @@ function streak(){
 
 function period(days){
   var out=[];
-  for(var i=days-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var data=ld(fk(d));out.push({date:d,score:ds(data),has:Object.keys(data).length>0})}
+  for(var i=days-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var data=ld(fk(d));out.push({date:d,score:ds(data),has:Object.keys(data).length>0});}
   return out;
 }
 
@@ -216,244 +179,225 @@ function avg(arr){
   return Math.round(w.reduce(function(a,s){return a+s.score},0)/w.length);
 }
 
-function showTab(t,btn){
+function ST(t){
   CT=t;
   document.querySelectorAll(".tab").forEach(function(el){el.classList.remove("on")});
-  btn.classList.add("on");
+  document.getElementById("tab-"+t).classList.add("on");
   document.querySelectorAll(".page").forEach(function(el){el.classList.remove("on")});
   document.getElementById(t).classList.add("on");
   render();
 }
 
-function toggleMeal(id){EX=EX===id?null:id;render()}
+function toggleMeal(id){EX=EX===id?null:id;render();}
+function toggleItem(mid,i){var k=mid+"-"+i,data=ld(tk());data[k]=!data[k];sd(tk(),data);render();updateClock();}
+function toggleSupp(i){var k="supp-"+i,data=ld(tk());data[k]=!data[k];sd(tk(),data);render();updateClock();}
+function shiftDay(n){var d=new Date(HD+"T12:00:00");d.setDate(d.getDate()+n);var nk=fk(d);if(nk<=tk()){HD=nk;SC=false;render();}}
+function toggleCal(){SC=!SC;render();}
+function shiftCal(n){var nm=new Date(CM.getFullYear(),CM.getMonth()+n,1);if(nm<=new Date()){CM=nm;render();}}
+function selDay(dk){HD=dk;SC=false;render();}
+function goHist(dk){HD=dk;ST("history");}
 
-function toggleItem(mid,i){
-  var k=mid+"-"+i, data=ld(tk());
-  data[k]=!data[k];
-  sd(tk(),data);
-  render();
-  updateClock();
-}
-
-function toggleSupp(i){
-  var k="supp-"+i, data=ld(tk());
-  data[k]=!data[k];
-  sd(tk(),data);
-  render();
-  updateClock();
-}
-
-function shiftDay(n){
-  var d=new Date(HD+"T12:00:00");
-  d.setDate(d.getDate()+n);
-  var nk=fk(d);
-  if(nk<=tk()){HD=nk;SC=false;render()}
-}
-
-function toggleCal(){SC=!SC;render()}
-
-function shiftCal(n){
-  var nm=new Date(CM.getFullYear(),CM.getMonth()+n,1);
-  if(nm<=new Date()){CM=nm;render()}
-}
-
-function selDay(dk){HD=dk;SC=false;render()}
-
-function goHist(dk){
-  HD=dk;
-  document.querySelectorAll(".tab").forEach(function(el){el.classList.remove("on")});
-  document.querySelectorAll(".tab")[1].classList.add("on");
-  document.querySelectorAll(".page").forEach(function(el){el.classList.remove("on")});
-  document.getElementById("history").classList.add("on");
-  CT="history";
-  render();
+function el(tag,cls,style,content){
+  return "<"+tag+(cls?' class="'+cls+'"':'')+(style?' style="'+style+'"':'')+">"+content+"</"+tag+">";
 }
 
 function renderToday(){
-  var data=ld(tk()), c=cons(data), rp=Math.min(c.kcal/TOT.kcal*100,100), rc=rp>=100?"#4ade80":"#f59e0b";
-  var h="";
-  h+="<div class=\"card cp\" style=\"margin-bottom:14px\">";
-  h+="<div class=\"ring-row\">";
-  h+="<div class=\"ring-box\">"+ring(rp,110,8,rc);
-  h+="<div class=\"ring-txt\"><div class=\"rnum\">"+c.kcal+"</div><div class=\"rlbl\">KCAL</div><div class=\"rlbl\">/"+TOT.kcal+"</div></div></div>";
-  h+="<div class=\"bars\">"+mbar("PROTEIN",c.p,TOT.p,"#f59e0b")+mbar("CARBS",c.c,TOT.c,"#3b82f6")+mbar("FAT",c.f,TOT.f,"#ec4899");
-  h+="<div style=\"font-size:9px;color:#374151;margin-top:6px\">TARGET: "+TOT.p+"g / "+TOT.c+"g / "+TOT.f+"g</div></div></div></div>";
+  var data=ld(tk()),c=cons(data),rp=Math.min(c.kcal/TOT.kcal*100,100),rc=rp>=100?"#4ade80":"#f59e0b";
+  var out=[];
 
+  // Ring card
+  var ringHTML=ring(rp,110,8,rc);
+  var innerTxt='<div class="ring-txt"><div class="rnum">'+c.kcal+'</div><div class="rlbl">KCAL</div><div class="rlbl">/'+TOT.kcal+'</div></div>';
+  var barsHTML=mbar("PROTEIN",c.p,TOT.p,"#f59e0b")+mbar("CARBS",c.c,TOT.c,"#3b82f6")+mbar("FAT",c.f,TOT.f,"#ec4899");
+  barsHTML+='<div style="font-size:9px;color:#374151;margin-top:6px">TARGET: '+TOT.p+'g / '+TOT.c+'g / '+TOT.f+'g</div>';
+  out.push('<div class="card cp" style="margin-bottom:14px"><div class="ring-row"><div class="ring-box">'+ringHTML+innerTxt+'</div><div class="bars">'+barsHTML+'</div></div></div>');
+
+  // Meal cards
   MEALS.forEach(function(meal){
     var done=md(meal,data);
     var cnt=meal.items.filter(function(_,i){return data[meal.id+"-"+i]}).length;
     var isOpen=EX===meal.id;
-    var pp=cnt/meal.items.length*100;
-    h+="<div class=\"card"+(done?" dglow":"")+"\" style=\"margin-bottom:10px\">";
-    h+="<div class=\"mhdr\" onclick=\"toggleMeal('"+meal.id+"')\">";
-    h+="<div class=\"micon"+(done?" done")+"\">"+(done?"OK":meal.label.charAt(0))+"</div>";
-    h+="<div style=\"flex:1\"><div><span class=\"mnm"+(done?" done")+"\">"+meal.label+"</span>";
-    h+="<span class=\"mtm\">"+meal.time.toUpperCase()+"</span></div>";
-    h+="<div class=\"mmac\"><span class=\"kc\">"+meal.kcal+" kcal</span> P:"+meal.protein+"g C:"+meal.carbs+"g F:"+meal.fat+"g</div></div>";
-    h+="<div style=\"display:flex;flex-direction:column;align-items:flex-end;gap:4px\">";
-    h+="<div class=\"mcnt"+(done?" done")+"\">"+cnt+"/"+meal.items.length+"</div>";
-    h+="<span style=\"color:#4b5563;font-size:11px\">"+(isOpen?"^":"v")+"</span></div></div>";
-    h+="<div class=\"mprog\"><div class=\"mpf\" style=\"width:"+pp+"%;background:"+(done?"#4ade80":"#f59e0b")+"\"></div></div>";
+    var pp=(cnt/meal.items.length*100).toFixed(0);
+    var cardCls="card"+(done?" dglow":"");
+    var iconCls="micon"+(done?" done":"");
+    var nameCls="mnm"+(done?" done":"");
+    var cntCls="mcnt"+(done?" done":"");
+
+    var hdr='<div class="mhdr" onclick="toggleMeal(''+meal.id+'')">';
+    hdr+='<div class="'+iconCls+'">'+meal.icon+'</div>';
+    hdr+='<div style="flex:1"><div><span class="'+nameCls+'">'+meal.label+'</span><span class="mtm">'+meal.time.toUpperCase()+'</span></div>';
+    hdr+='<div class="mmac"><span class="kc">'+meal.kcal+' kcal</span>  P:'+meal.protein+'g C:'+meal.carbs+'g F:'+meal.fat+'g</div></div>';
+    hdr+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="'+cntCls+'">'+cnt+'/'+meal.items.length+'</div>';
+    hdr+='<span style="color:#4b5563;font-size:14px">'+(isOpen?"&#9650;":"&#9660;")+'</span></div></div>';
+
+    var prog='<div class="mprog"><div class="mpf" style="width:'+pp+'%;background:'+(done?"#4ade80":"#f59e0b")+'"></div></div>';
+
+    var items="";
     if(isOpen){
       meal.items.forEach(function(item,i){
-        var k=meal.id+"-"+i, t=!!data[k];
-        h+="<div class=\"item"+(t?" tk")+"\" onclick=\"toggleItem('"+meal.id+"',"+i+")\">";
-        h+="<div class=\"chk"+(t?" on")+"\">"+(t?"v":"")+"</div>";
-        h+="<div><div class=\"inm"+(t?" tk")+"\">"+item.n+"</div><div class=\"idt\">"+item.d+"</div></div></div>";
+        var k=meal.id+"-"+i,t=!!data[k];
+        var rowCls="item"+(t?" tk":"");
+        var chkCls="chk"+(t?" on":"");
+        items+='<div class="'+rowCls+'" onclick="toggleItem(''+meal.id+'','+i+')">';
+        items+='<div class="'+chkCls+'">'+(t?"&#10003;":"")+'</div>';
+        items+='<div><div class="inm'+(t?" tk")+'">'+item.n+'</div><div class="idt">'+item.d+'</div></div></div>';
       });
     }
-    h+="</div>";
+
+    out.push('<div class="'+cardCls+'" style="margin-bottom:10px">'+hdr+prog+items+'</div>');
   });
 
-  h+="<div class=\"card cp\"><div class=\"stitle\">SUPPLEMENTS</div>";
+  // Supplements
+  var suppHTML='<div class="card cp"><div class="stitle">SUPPLEMENTS</div>';
   SUPPS.forEach(function(s,i){
-    var k="supp-"+i, done=!!data[k];
-    h+="<div class=\"supp\" onclick=\"toggleSupp("+i+")\">";
-    h+="<div class=\"schk"+(done?" on")+"\">"+(done?"v":"")+"</div>";
-    h+="<span style=\"font-size:11px;color:#9ca3af\">"+s.e+"</span>";
-    h+="<div><div class=\"snm"+(done?" done")+"\">"+s.n+"</div><div class=\"sdt\">"+s.d+"</div></div></div>";
+    var k="supp-"+i,done=!!data[k];
+    suppHTML+='<div class="supp" onclick="toggleSupp('+i+')">';
+    suppHTML+='<div class="schk'+(done?" on")+'">'+(done?"&#10003;":"")+'</div>';
+    suppHTML+='<span style="font-size:10px;color:#818cf8;font-weight:700;width:24px;flex-shrink:0">'+s.e+'</span>';
+    suppHTML+='<div><div class="snm'+(done?" done")+'">'+s.n+'</div><div class="sdt">'+s.d+'</div></div></div>';
   });
-  h+="</div>";
+  suppHTML+='</div>';
+  out.push(suppHTML);
 
   if(MEALS.filter(function(m){return md(m,data)}).length===4){
-    h+="<div class=\"banner\"><div class=\"btitle\">DAY COMPLETE!</div><div class=\"bsub\">All "+TOT.kcal+" kcal fuelled. Recovery mode on.</div></div>";
+    out.push('<div class="banner"><div class="btitle">DAY COMPLETE!</div><div class="bsub">All '+TOT.kcal+' kcal fuelled. Recovery mode on.</div></div>');
   }
-  return h;
+
+  return out.join("");
 }
 
 function renderHistory(){
-  var isT=HD===tk(), hd=ld(HD);
+  var isT=HD===tk(),hd=ld(HD);
   var d=new Date(HD+"T12:00:00");
   var dl=isT?"TODAY":d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"}).toUpperCase();
-  var h="";
-  h+="<div class=\"card cp\" style=\"margin-bottom:13px\">";
-  h+="<div class=\"navrow\">";
-  h+="<button class=\"nbtn\" onclick=\"shiftDay(-1)\">prev</button>";
-  h+="<div class=\"navc\"><div class=\"navd"+(isT?" td")+"\">"+dl+"</div><div class=\"navk\">"+HD+"</div></div>";
-  h+="<button class=\"nbtn\" onclick=\"shiftDay(1)\""+( isT?" disabled":"")+">next</button></div>";
-  h+="<button class=\"caltog\" onclick=\"toggleCal()\">"+(SC?"hide calendar":"show calendar")+"</button></div>";
+  var out=[];
+
+  var nav='<div class="card cp" style="margin-bottom:13px">';
+  nav+='<div class="navrow">';
+  nav+='<button class="nbtn" onclick="shiftDay(-1)">&#8249; prev</button>';
+  nav+='<div class="navc"><div class="navd'+(isT?" td")+'">'+dl+'</div><div class="navk">'+HD+'</div></div>';
+  nav+='<button class="nbtn" onclick="shiftDay(1)"'+(isT?" disabled":"")+'>next &#8250;</button></div>';
+  nav+='<button class="caltog" onclick="toggleCal()">'+(SC?"hide calendar":"open calendar")+'</button></div>';
+  out.push(nav);
 
   if(SC){
-    var yr=CM.getFullYear(), mo=CM.getMonth();
+    var yr=CM.getFullYear(),mo=CM.getMonth();
     var ml=CM.toLocaleDateString("en-GB",{month:"long",year:"numeric"}).toUpperCase();
-    var fd=new Date(yr,mo,1).getDay(), dim=new Date(yr,mo+1,0).getDate(), today=tk();
+    var fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),today=tk();
     var cells="";
     for(var i=0;i<fd;i++)cells+="<div></div>";
     for(var day=1;day<=dim;day++){
-      var d2=new Date(yr,mo,day), dk=fk(d2);
-      var data2=ld(dk), s2=ds(data2), hd2=Object.keys(data2).length>0;
-      var fut=dk>today, sel=dk===HD, isT2=dk===today;
+      var d2=new Date(yr,mo,day),dk=fk(d2);
+      var dd=ld(dk),s2=ds(dd),hd2=Object.keys(dd).length>0;
+      var fut=dk>today,sel=dk===HD,isT2=dk===today;
       var cls="calday"+(sel?" sel":"")+(isT2?" tod":"")+(fut?" fut":"");
-      cells+="<div class=\""+cls+"\" onclick=\"selDay('"+dk+"')\" style=\"color:"+(hd2?sc(s2):"#4b5563")+";font-weight:"+(isT2?700:400)+"\">"+day;
-      if(hd2)cells+="<div class=\"caldot\" style=\"background:"+sc(s2)+";width:4px;height:4px;border-radius:50%;margin-top:1px\"></div>";
-      cells+="</div>";
+      var col=hd2?sc(s2):"#4b5563";
+      var fw=isT2?700:400;
+      cells+='<div class="'+cls+'" onclick="selDay(''+dk+'')" style="color:'+col+';font-weight:'+fw+'">'+day;
+      if(hd2)cells+='<div class="caldot" style="background:'+sc(s2)+'"></div>';
+      cells+='</div>';
     }
-    h+="<div class=\"calwrap\">";
-    h+="<div class=\"calh\"><button class=\"calnb\" onclick=\"shiftCal(-1)\">prev</button><div class=\"calm\">"+ml+"</div><button class=\"calnb\" onclick=\"shiftCal(1)\">next</button></div>";
-    h+="<div class=\"calgrid\" style=\"margin-bottom:4px\">";
-    ["S","M","T","W","T","F","S"].forEach(function(x){h+="<div class=\"caldl\">"+x+"</div>"});
-    h+="</div><div class=\"calgrid\">"+cells+"</div>";
-    h+="<div class=\"leg\">";
-    [["#4ade80","80%+"],["#f59e0b","50-79%"],["#f87171","less than 50%"]].forEach(function(x){
-      h+="<div class=\"legi\"><div class=\"legd\" style=\"background:"+x[0]+"\"></div>"+x[1]+"</div>";
-    });
-    h+="</div></div>";
+    var calHTML='<div class="calwrap">';
+    calHTML+='<div class="calh"><button class="calnb" onclick="shiftCal(-1)">prev</button><div class="calm">'+ml+'</div><button class="calnb" onclick="shiftCal(1)">next</button></div>';
+    calHTML+='<div class="calgrid" style="margin-bottom:4px">';
+    ["S","M","T","W","T","F","S"].forEach(function(x){calHTML+='<div class="caldl">'+x+'</div>';});
+    calHTML+='</div><div class="calgrid">'+cells+'</div>';
+    calHTML+='<div class="leg"><div class="legi"><div class="legd" style="background:#4ade80"></div>80%+</div><div class="legi"><div class="legd" style="background:#f59e0b"></div>50-79%</div><div class="legi"><div class="legd" style="background:#f87171"></div>low</div></div>';
+    calHTML+='</div>';
+    out.push(calHTML);
   }
 
   if(!Object.keys(hd).length){
-    return h+"<div class=\"card\"><div class=\"empty\"><div class=\"eic\">no data</div><div class=\"et\">NO DATA</div><div class=\"es\">No tracking found for this day</div></div></div>";
+    out.push('<div class="card"><div class="empty"><div class="et">NO DATA</div><div class="es">No tracking found for this day</div></div></div>');
+    return out.join("");
   }
 
-  var s=ds(hd), tot=Object.values(hd).filter(Boolean).length, mdone=MEALS.filter(function(m){return md(m,hd)}).length;
+  var s=ds(hd),tot=Object.values(hd).filter(Boolean).length,mdone=MEALS.filter(function(m){return md(m,hd)}).length;
   var sl=s>=80?"GREAT DAY":s>=50?"PARTIAL DAY":"MISSED DAY";
 
-  h+="<div class=\"card cp\" style=\"margin-bottom:10px;display:flex;align-items:center;gap:13px\">";
-  h+="<div class=\"scrwrap\">"+ring(s,74,7,sc(s));
-  h+="<div class=\"scrinn\"><div style=\"font-size:19px;font-weight:900;color:#f9fafb;line-height:1\">"+s+"%</div><div style=\"font-size:8px;color:#6b7280\">SCORE</div></div></div>";
-  h+="<div><div style=\"font-size:18px;font-weight:900;color:"+sc(s)+";letter-spacing:1px\">"+sl+"</div>";
-  h+="<div style=\"font-size:10px;color:#6b7280;margin-top:3px\">"+tot+" / "+TC+" items done</div>";
-  h+="<div style=\"font-size:10px;color:#4b5563;margin-top:2px\">"+mdone+" / "+MEALS.length+" meals complete</div></div></div>";
+  var scoreCard='<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:13px">';
+  scoreCard+='<div class="srw">'+ring(s,74,7,sc(s))+'<div class="sri"><div style="font-size:19px;font-weight:900;color:#f9fafb;line-height:1">'+s+'%</div><div style="font-size:8px;color:#6b7280">SCORE</div></div></div>';
+  scoreCard+='<div><div style="font-size:18px;font-weight:900;color:'+sc(s)+'">'+sl+'</div>';
+  scoreCard+='<div style="font-size:10px;color:#6b7280;margin-top:3px">'+tot+' / '+TC+' items done</div>';
+  scoreCard+='<div style="font-size:10px;color:#4b5563;margin-top:2px">'+mdone+' / '+MEALS.length+' meals complete</div></div></div>';
+  out.push(scoreCard);
 
-  h+="<div class=\"card\" style=\"margin-bottom:10px\">";
+  var mealsCard='<div class="card" style="margin-bottom:10px">';
   MEALS.forEach(function(meal){
-    var done=md(meal,hd), cnt=meal.items.filter(function(_,i){return hd[meal.id+"-"+i]}).length;
-    h+="<div class=\"hrow\"><div style=\"font-size:17px\">"+(done?"DONE":meal.label.charAt(0))+"</div>";
-    h+="<div style=\"flex:1\"><div style=\"font-size:14px;font-weight:800;color:"+(done?"#4ade80":"#9ca3af")+";letter-spacing:1px\">"+meal.label+"</div>";
-    h+="<div style=\"font-size:9px;color:#4b5563\">"+cnt+"/"+meal.items.length+" items</div></div>";
-    h+="<div class=\"minibar\"><div class=\"minif\" style=\"width:"+(cnt/meal.items.length*100)+"%;background:"+(done?"#4ade80":"#f59e0b")+"\"></div></div></div>";
+    var done=md(meal,hd),cnt=meal.items.filter(function(_,i){return hd[meal.id+"-"+i]}).length;
+    mealsCard+='<div class="hrow">';
+    mealsCard+='<div style="width:30px;font-size:14px;font-weight:800;color:'+(done?"#4ade80":"#6b7280")+'">'+meal.icon+'</div>';
+    mealsCard+='<div style="flex:1"><div style="font-size:14px;font-weight:800;color:'+(done?"#4ade80":"#9ca3af")+'">'+meal.label+'</div>';
+    mealsCard+='<div style="font-size:9px;color:#4b5563">'+cnt+'/'+meal.items.length+' items</div></div>';
+    mealsCard+='<div class="minibar"><div class="minif" style="width:'+(cnt/meal.items.length*100).toFixed(0)+'%;background:'+(done?"#4ade80":"#f59e0b")+'"></div></div></div>';
   });
-  h+="</div>";
+  mealsCard+='</div>';
+  out.push(mealsCard);
 
-  h+="<div class=\"card cp\"><div class=\"stitle\">SUPPLEMENTS</div>";
+  var suppCard='<div class="card cp"><div class="stitle">SUPPLEMENTS</div>';
   SUPPS.forEach(function(s2,i){
     var done=!!hd["supp-"+i];
-    h+="<div style=\"display:flex;align-items:center;gap:9px;padding:5px 0;border-top:"+(i>0?"1px solid #111827":"none")+"\"><span>"+(done?"done":"")+"</span>";
-    h+="<span style=\"font-size:12px;color:"+(done?"#6b7280":"#d1d5db")+";text-decoration:"+(done?"line-through":"none")+"\">"+s2.n+"</span></div>";
+    suppCard+='<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-top:'+(i>0?"1px solid #111827":"none")+'">';
+    suppCard+='<span style="font-size:10px">'+(done?"done":"---")+'</span>';
+    suppCard+='<span style="font-size:12px;color:'+(done?"#6b7280":"#d1d5db")+';text-decoration:'+(done?"line-through":"none")+'">'+s2.n+'</span></div>';
   });
-  h+="</div>";
-  return h;
+  suppCard+='</div>';
+  out.push(suppCard);
+
+  return out.join("");
 }
 
 function renderProgress(){
-  var td=ld(tk()), ts=ds(td), st=streak(), week=period(7), month=period(30);
-  var h="";
-  h+="<div class=\"sgrid\">";
-  h+="<div class=\"sc\"><div class=\"sv\" style=\"color:"+(st>0?"#f59e0b":"#4b5563")+"\">"+st+"d</div><div class=\"sl\">STREAK</div><div class=\"ss\">80%+ days</div></div>";
-  h+="<div class=\"sc\"><div class=\"sv\" style=\"color:#3b82f6\">"+avg(week)+"%</div><div class=\"sl\">WEEK</div><div class=\"ss\">"+week.filter(function(s){return s.has}).length+"/7 tracked</div></div>";
-  h+="<div class=\"sc\"><div class=\"sv\" style=\"color:#818cf8\">"+avg(month)+"%</div><div class=\"sl\">MONTH</div><div class=\"ss\">"+month.filter(function(s){return s.has}).length+"/30 tracked</div></div></div>";
+  var td=ld(tk()),ts=ds(td),st=streak(),week=period(7),month=period(30);
+  var out=[];
+
+  out.push('<div class="sgrid"><div class="sc"><div class="sv" style="color:'+(st>0?"#f59e0b":"#4b5563")+'">'+st+'d</div><div class="sl">STREAK</div><div class="ss">80%+ days</div></div><div class="sc"><div class="sv" style="color:#3b82f6">'+avg(week)+'%</div><div class="sl">WEEK</div><div class="ss">'+week.filter(function(s){return s.has}).length+'/7</div></div><div class="sc"><div class="sv" style="color:#818cf8">'+avg(month)+'%</div><div class="sl">MONTH</div><div class="ss">'+month.filter(function(s){return s.has}).length+'/30</div></div></div>');
 
   var tdn=Object.values(td).filter(Boolean).length;
-  h+="<div class=\"card cp\" style=\"margin-bottom:10px;display:flex;align-items:center;gap:13px\">";
-  h+="<div class=\"scrwrap\">"+ring(ts,70,7,sc(ts));
-  h+="<div class=\"scrinn\"><div style=\"font-size:18px;font-weight:900;color:#f9fafb;line-height:1\">"+ts+"%</div><div style=\"font-size:8px;color:#6b7280\">TODAY</div></div></div>";
-  h+="<div style=\"flex:1\"><div style=\"font-size:17px;font-weight:800;color:#f9fafb\">"+ts+"% COMPLETE</div>";
-  h+="<div style=\"font-size:10px;color:#6b7280;margin-top:3px\">"+tdn+" / "+TC+" checked</div>";
-  h+="<div class=\"track\" style=\"margin-top:7px\"><div class=\"fill\" style=\"width:"+ts+"%;background:"+sc(ts)+"\"></div></div></div></div>";
+  out.push('<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:13px"><div class="srw">'+ring(ts,70,7,sc(ts))+'<div class="sri"><div style="font-size:18px;font-weight:900;color:#f9fafb;line-height:1">'+ts+'%</div><div style="font-size:8px;color:#6b7280">TODAY</div></div></div><div style="flex:1"><div style="font-size:17px;font-weight:800;color:#f9fafb">'+ts+'% COMPLETE</div><div style="font-size:10px;color:#6b7280;margin-top:3px">'+tdn+' / '+TC+' checked</div><div class="track" style="margin-top:7px"><div class="fill" style="width:'+ts+'%;background:'+sc(ts)+'"></div></div></div></div>');
 
-  h+="<div class=\"card cp\" style=\"margin-bottom:10px\"><div class=\"stitle\">LAST 7 DAYS</div><div class=\"barchart\">";
+  var barHTML='<div class="card cp" style="margin-bottom:10px"><div class="stitle">LAST 7 DAYS</div><div class="barchart">';
   week.forEach(function(s){
-    var ht=s.has?Math.max(s.score/100*68,4):4, isT=fk(s.date)===tk();
-    h+="<div class=\"bc\"><div class=\"bcs\" style=\"color:"+(s.has?sc(s.score):"#374151")+"\">"+(s.has?s.score:"-")+"</div>";
-    h+="<div class=\"bcb\" style=\"height:"+ht+"px;background:"+(s.has?sc(s.score):"#1f2937")+";opacity:"+(isT?1:.75)+"\"></div>";
-    h+="<div class=\"bcd"+(isT?" t")+"\">"+s.date.toLocaleDateString("en-GB",{weekday:"short"}).slice(0,2).toUpperCase()+"</div></div>";
+    var ht=s.has?Math.max(s.score/100*68,4):4,isT=fk(s.date)===tk();
+    barHTML+='<div class="bc"><div class="bcs" style="color:'+(s.has?sc(s.score):"#374151")+'">'+(s.has?s.score:"-")+'</div><div class="bcb" style="height:'+ht+'px;background:'+(s.has?sc(s.score):"#1f2937")+';opacity:'+(isT?1:.75)+'"></div><div class="bcd'+(isT?" t")+'">'+s.date.toLocaleDateString("en-GB",{weekday:"short"}).slice(0,2).toUpperCase()+'</div></div>';
   });
-  h+="</div></div>";
+  barHTML+='</div></div>';
+  out.push(barHTML);
 
-  h+="<div class=\"card cp\" style=\"margin-bottom:10px\"><div class=\"stitle\">LAST 30 DAYS</div><div class=\"hmap\">";
+  var hmapHTML='<div class="card cp" style="margin-bottom:10px"><div class="stitle">LAST 30 DAYS</div><div class="hmap">';
   month.forEach(function(s){
-    h+="<div class=\"hc\" style=\"background:"+(s.has?sc(s.score):"#111827")+";opacity:"+(s.has?.85:.4)+"\" onclick=\"goHist('"+fk(s.date)+"')\"></div>";
+    hmapHTML+='<div class="hc" style="background:'+(s.has?sc(s.score):"#111827")+';opacity:'+(s.has?.85:.4)+'" onclick="goHist(''+fk(s.date)+'')"></div>';
   });
-  h+="</div><div class=\"leg\" style=\"margin-top:8px\">";
-  [["#4ade80","Great"],["#f59e0b","OK"],["#f87171","Low"]].forEach(function(x){
-    h+="<div class=\"legi\"><div class=\"legd\" style=\"background:"+x[0]+"\"></div>"+x[1]+"</div>";
-  });
-  h+="</div></div>";
+  hmapHTML+='</div><div class="leg"><div class="legi"><div class="legd" style="background:#4ade80"></div>Great</div><div class="legi"><div class="legd" style="background:#f59e0b"></div>OK</div><div class="legi"><div class="legd" style="background:#f87171"></div>Low</div></div></div>';
+  out.push(hmapHTML);
 
-  h+="<div class=\"card cp\"><div class=\"stitle\">MEAL COMPLETION - 7 DAYS</div>";
+  var mcHTML='<div class="card cp"><div class="stitle">MEAL COMPLETION - 7 DAYS</div>';
   var wd=week.filter(function(s){return s.has});
   MEALS.forEach(function(meal){
     var rate=wd.length===0?0:Math.round(wd.filter(function(s){return md(meal,ld(fk(s.date)))}).length/wd.length*100);
-    h+="<div class=\"msrow\"><div class=\"msh\"><span style=\"color:#9ca3af\">"+meal.label.toUpperCase()+"</span><span style=\"color:"+sc(rate)+"\">"+rate+"%</span></div>";
-    h+="<div class=\"track\"><div class=\"fill\" style=\"width:"+rate+"%;background:"+sc(rate)+"\"></div></div></div>";
+    mcHTML+='<div class="msrow"><div class="msh"><span style="color:#9ca3af">'+meal.label.toUpperCase()+'</span><span style="color:'+sc(rate)+'">'+rate+'%</span></div><div class="track"><div class="fill" style="width:'+rate+'%;background:'+sc(rate)+'"></div></div></div>';
   });
-  h+="</div>";
-  return h;
+  mcHTML+='</div>';
+  out.push(mcHTML);
+
+  return out.join("");
 }
 
 function render(){
   var p=document.getElementById(CT);
-  if(!p)return;
-  if(CT==="today")p.innerHTML=renderToday();
-  else if(CT==="history")p.innerHTML=renderHistory();
-  else p.innerHTML=renderProgress();
+  if(p){
+    if(CT==="today")p.innerHTML=renderToday();
+    else if(CT==="history")p.innerHTML=renderHistory();
+    else p.innerHTML=renderProgress();
+  }
 }
 
 function updateClock(){
   var now=new Date();
   var ts=now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
   var ds2=now.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
-  var st=streak(), dm=MEALS.filter(function(m){return md(m,ld(tk()))}).length;
-  var ht=document.getElementById("htime"), hd=document.getElementById("hdate"), hm=document.getElementById("hmeals");
+  var st=streak(),dm=MEALS.filter(function(m){return md(m,ld(tk()))}).length;
+  var ht=document.getElementById("htime"),hd=document.getElementById("hdate"),hm=document.getElementById("hmeals");
   if(ht)ht.textContent=ts;
   if(hd)hd.textContent=ds2;
   if(hm)hm.textContent=dm+"/"+MEALS.length+" MEALS - "+(st>0?"STREAK: "+st+"d":"start your streak!");
@@ -462,8 +406,7 @@ function updateClock(){
 
 updateClock();
 render();
-setInterval(function(){updateClock();if(CT==="today")render()},60000);
-
+setInterval(function(){updateClock();if(CT==="today")render();},60000);
 </script>
 </body>
 </html>
