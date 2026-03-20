@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fuel Log">
+<title>Fuel Log</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#030712;color:#f9fafb;font-family:Arial,sans-serif}
+body{padding-bottom:50px}
+#hdr{background:#0f172a;border-bottom:1px solid #1f2937;padding:14px 14px 0;position:sticky;top:0;z-index:999}
+#hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+#logo{font-size:26px;font-weight:900;letter-spacing:4px;color:#f9fafb}
+#hdate{font-size:10px;color:#6b7280;margin-top:2px}
+#htime{font-size:22px;font-weight:700;color:#f9fafb;text-align:right}
+#hmeals{font-size:10px;color:#4ade80;text-align:right}
+#tabs{display:flex}
+.tab{flex:1;padding:10px 0;font-size:13px;font-weight:700;letter-spacing:2px;border:none;cursor:pointer;background:transparent;color:#4b5563;border-bottom:2px solid transparent}
+.tab.on{background:#0f172a;color:#f9fafb;border-bottom:2px solid #f59e0b}
+.page{display:none;padding:14px}
+.page.on{display:block}
+.card{background:#0f172a;border:1px solid #1f2937;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.cp{padding:14px}
+/* ring */
+.ring-row{display:flex;gap:14px;align-items:center}
+.ring-box{position:relative;width:110px;height:110px;flex-shrink:0}
+.ring-box svg{position:absolute;top:0;left:0}
+.ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rnum{font-size:24px;font-weight:900;color:#f9fafb;line-height:1}
+.rlbl{font-size:9px;color:#6b7280}
+.bars{flex:1}
+.mbar{margin-bottom:8px}
+.mbar-h{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;color:#9ca3af}
+.mbar-v{color:#f9fafb}
+.track{height:5px;background:#1f2937;border-radius:3px;overflow:hidden}
+.fill{height:100%;border-radius:3px}
+/* meal */
+.mhdr{padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:11px}
+.micon{width:40px;height:40px;border-radius:10px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid #1f2937}
+.micon.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.3)}
+.mnm{font-size:17px;font-weight:800;letter-spacing:1px;color:#f9fafb}
+.mnm.done{color:#4ade80}
+.mtm{font-size:9px;color:#6b7280;margin-left:6px}
+.mmac{font-size:10px;color:#6b7280;margin-top:2px}
+.mmac .kc{color:#9ca3af}
+.mcnt{font-size:10px;color:#6b7280;font-weight:600}
+.mcnt.done{color:#4ade80}
+.mprog{height:2px;background:#111827}
+.mpf{height:100%}
+.dglow{box-shadow:0 0 0 1px rgba(74,222,128,.3);border-color:rgba(74,222,128,.25)!important;background:rgba(4,120,87,.08)!important}
+.item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-top:1px solid #111827;cursor:pointer}
+.item:active{background:rgba(255,255,255,.05)}
+.item.tk{background:rgba(74,222,128,.04)}
+.chk{width:22px;height:22px;border-radius:50%;flex-shrink:0;border:2px solid #374151;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:transparent}
+.chk.on{border-color:#4ade80;background:#4ade80;color:#030712}
+.inm{font-size:13px;color:#e5e7eb;font-weight:500}
+.inm.tk{color:#6b7280;text-decoration:line-through}
+.idt{font-size:10px;color:#4b5563;margin-top:1px}
+.stitle{font-size:13px;font-weight:800;letter-spacing:2px;color:#6b7280;margin-bottom:10px}
+.supp{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #111827;cursor:pointer}
+.supp:first-of-type{border-top:none}
+.schk{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid #374151;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:transparent}
+.schk.on{border-color:#818cf8;background:#818cf8;color:#030712}
+.snm{font-size:12px;color:#d1d5db}
+.snm.done{color:#6b7280;text-decoration:line-through}
+.sdt{font-size:9px;color:#4b5563}
+.banner{padding:14px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);border-radius:12px;text-align:center;margin-top:12px}
+.btitle{font-size:18px;font-weight:900;letter-spacing:2px;color:#4ade80}
+.bsub{font-size:11px;color:#6b7280;margin-top:4px}
+/* history */
+.navrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nbtn{width:36px;height:36px;border-radius:8px;border:1px solid #1f2937;background:#111827;color:#9ca3af;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.nbtn:disabled{color:#1f2937;background:#0a0f1a}
+.navc{text-align:center}
+.navd{font-size:16px;font-weight:800;letter-spacing:1px;color:#f9fafb}
+.navd.td{color:#4ade80}
+.navk{font-size:10px;color:#6b7280}
+.caltog{width:100%;padding:8px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#9ca3af;font-size:11px;cursor:pointer;letter-spacing:1px}
+.calwrap{background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:13px;margin-bottom:13px}
+.calh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.calm{font-size:14px;font-weight:800;letter-spacing:1px;color:#f9fafb}
+.calnb{width:28px;height:28px;border-radius:6px;border:1px solid #1f2937;background:#111827;color:#9ca3af;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.caldl{text-align:center;font-size:8px;color:#4b5563;padding-bottom:3px}
+.calday{aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;font-size:10px;color:#4b5563}
+.calday:active{background:rgba(255,255,255,.06)}
+.calday.sel{background:rgba(245,158,11,.15);border-color:#f59e0b}
+.calday.tod{border-color:#374151}
+.calday.fut{opacity:.2;pointer-events:none}
+.caldot{width:4px;height:4px;border-radius:50%;margin-top:1px}
+.leg{display:flex;gap:8px;margin-top:10px;justify-content:center;flex-wrap:wrap}
+.legi{display:flex;align-items:center;gap:4px;font-size:8px;color:#6b7280}
+.legd{width:6px;height:6px;border-radius:50%}
+.empty{padding:28px;text-align:center}
+.eic{font-size:28px;margin-bottom:8px}
+.et{font-size:16px;font-weight:800;color:#4b5563;letter-spacing:1px}
+.es{font-size:10px;color:#374151;margin-top:4px}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #111827}
+.hrow:last-child{border-bottom:none}
+.minibar{width:42px;height:5px;background:#1f2937;border-radius:3px;overflow:hidden;flex-shrink:0}
+.minif{height:100%;border-radius:3px}
+/* progress */
+.sgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.sc{background:#0f172a;border:1px solid #1f2937;border-radius:10px;padding:12px 8px;text-align:center}
+.sv{font-size:22px;font-weight:900;line-height:1}
+.sl{font-size:8px;color:#6b7280;margin-top:3px;letter-spacing:1px}
+.ss{font-size:8px;color:#374151;margin-top:2px}
+.barchart{display:flex;align-items:flex-end;gap:5px;height:80px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bcs{font-size:8px;color:#6b7280}
+.bcb{width:100%;border-radius:3px 3px 0 0}
+.bcd{font-size:7px;color:#4b5563}
+.bcd.t{color:#f9fafb}
+.hmap{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.hc{aspect-ratio:1;border-radius:3px;cursor:pointer}
+.msrow{margin-bottom:9px}
+.msh{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px}
+.scrwrap{position:relative;flex-shrink:0}
+.scrinn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <div id="hdr-top">
+    <div>
+      <div id="logo">FUEL LOG</div>
+      <div id="hdate"></div>
+    </div>
+    <div>
+      <div id="htime"></div>
+      <div id="hmeals"></div>
+    </div>
+  </div>
+  <div id="tabs">
+    <button class="tab on" onclick="showTab('today',this)">TODAY</button>
+    <button class="tab" onclick="showTab('history',this)">HISTORY</button>
+    <button class="tab" onclick="showTab('progress',this)">PROGRESS</button>
+  </div>
+</div>
+
+<div class="page on" id="today"></div>
+<div class="page" id="history"></div>
+<div class="page" id="progress"></div>
+
+<script>
+var M=[
+  {id:'breakfast',label:'Breakfast',emoji:'🌅',time:'Morning',kcal:920,protein:72,carbs:95,fat:24,items:[
+    {n:'2 eggs + 1 egg white',d:'whole eggs + white'},
+    {n:'320 ml egg whites',d:'liquid egg whites'},
+    {n:'Halloumi',d:'2 slices · 40g'},
+    {n:'Jam',d:'20g'},
+    {n:'Peanut butter',d:'20g'},
+    {n:'Bread',d:'3 slices · 90g'},
+    {n:'Nestum rice',d:'30g'},
+    {n:'Kiwis',d:'2 units'}
+  ]},
+  {id:'lunch',label:'Lunch',emoji:'☀️',time:'Midday',kcal:870,protein:55,carbs:138,fat:8,items:[
+    {n:'Broccoli',d:'150g'},
+    {n:'Chicken breast',d:'150g'},
+    {n:'Basmati rice (cooked)',d:'400g'},
+    {n:'Banana',d:'1 unit'}
+  ]},
+  {id:'snack',label:'Snack',emoji:'⚡',time:'Post-Training',kcal:870,protein:48,carbs:105,fat:30,items:[
+    {n:'Chicken breast',d:'150g'},
+    {n:'Brazil nuts',d:'3 units'},
+    {n:'Walnuts',d:'3 units'},
+    {n:'Bananas',d:'2 units'},
+    {n:'Basmati rice (cooked)',d:'150g'}
+  ]},
+  {id:'dinner',label:'Dinner',emoji:'🌙',time:'Evening',kcal:830,protein:55,carbs:55,fat:32,items:[
+    {n:'Greens',d:'150g'},
+    {n:'Chicken breast',d:'150g'},
+    {n:'Olive oil',d:'2 tbsp'},
+    {n:'Alpro Soy Yogurt',d:'natural'},
+    {n:'Red fruits',d:'1 portion'},
+    {n:'Mackerel in olive oil',d:'1 can · Auchan cavala'},
+    {n:'Honey',d:'1 tsp'}
+  ]}
+];
+var S=[
+  {n:'Morning — Stack 1',d:'Magnesium · Vitamin Complex · Glycine',e:'🌄'},
+  {n:'Morning — Drops',d:'Vitamin D3 10,000UI · Retinol · K2 MK7',e:'💧'},
+  {n:'Afternoon',d:'Creatine · Omega-3 · Vitamin C',e:'⚡'},
+  {n:'Late Night',d:'Magnesium · Glycine',e:'🌙'}
+];
+var TOT={kcal:3490,p:230,c:393,f:94};
+var TC=M.reduce(function(a,m){return a+m.items.length},0)+S.length;
+var EX=null,HD=tk(),SC=false,CM=new Date(),CT='today';
+
+function tk(){var n=new Date();return n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate())}
+function fk(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+function p2(n){return String(n).padStart(2,'0')}
+function ld(k){try{return JSON.parse(localStorage.getItem('fl-'+k)||'{}')}catch(e){return{}}}
+function sd(k,v){try{localStorage.setItem('fl-'+k,JSON.stringify(v))}catch(e){}}
+function ds(data){if(!data||!Object.keys(data).length)return 0;return Math.round(Object.values(data).filter(Boolean).length/TC*100)}
+function sc(s){return s>=80?'#4ade80':s>=50?'#f59e0b':s>0?'#f87171':'#374151'}
+function md(meal,data){return meal.items.every(function(_,i){return data[meal.id+'-'+i]})}
+function cons(data){return M.reduce(function(a,m){if(md(m,data)){a.kcal+=m.kcal;a.p+=m.protein;a.c+=m.carbs;a.f+=m.fat}return a},{kcal:0,p:0,c:0,f:0})}
+
+function ring(pct,sz,sw,col){
+  var r=(sz-sw*2)/2,ci=2*Math.PI*r,da=(pct/100)*ci;
+  return '<svg width="'+sz+'" height="'+sz+'" style="transform:rotate(-90deg);display:block"><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="#1f2937" stroke-width="'+sw+'"/><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+da+' '+ci+'"/></svg>';
+}
+function mbar(lbl,val,max,col){
+  var p=Math.min(val/max*100,100);
+  return '<div class="mbar"><div class="mbar-h"><span>'+lbl+'</span><span class="mbar-v">'+val+'g</span></div><div class="track"><div class="fill" style="width:'+p+'%;background:'+col+'"></div></div></div>';
+}
+function streak(){
+  var s=0;
+  for(var i=0;i<365;i++){var d=new Date();d.setDate(d.getDate()-i);if(ds(ld(fk(d)))>=80)s++;else if(i>0)break;}
+  return s;
+}
+function period(days){
+  var out=[];
+  for(var i=days-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var data=ld(fk(d));out.push({date:d,score:ds(data),has:Object.keys(data).length>0})}
+  return out;
+}
+function avg(arr){var w=arr.filter(function(s){return s.has});if(!w.length)return 0;return Math.round(w.reduce(function(a,s){return a+s.score},0)/w.length)}
+
+function showTab(t,btn){
+  CT=t;
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('on')});
+  btn.classList.add('on');
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('on')});
+  document.getElementById(t).classList.add('on');
+  render();
+}
+
+function toggleMeal(id){EX=EX===id?null:id;render()}
+function toggleItem(mid,i){var k=mid+'-'+i,data=ld(tk());data[k]=!data[k];sd(tk(),data);render();updateClock()}
+function toggleSupp(i){var k='supp-'+i,data=ld(tk());data[k]=!data[k];sd(tk(),data);render();updateClock()}
+function shiftDay(n){var d=new Date(HD+'T12:00:00');d.setDate(d.getDate()+n);var nk=fk(d);if(nk<=tk()){HD=nk;SC=false;render()}}
+function toggleCal(){SC=!SC;render()}
+function shiftCal(n){var nm=new Date(CM.getFullYear(),CM.getMonth()+n,1);if(nm<=new Date()){CM=nm;render()}}
+function selDay(dk){HD=dk;SC=false;render()}
+function goHist(dk){HD=dk;document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('on')});document.querySelectorAll('.tab')[1].classList.add('on');document.querySelectorAll('.page').forEach(function(el){el.classList.remove('on')});document.getElementById('history').classList.add('on');CT='history';render()}
+
+function renderToday(){
+  var data=ld(tk()),c=cons(data),rp=Math.min(c.kcal/TOT.kcal*100,100),rc=rp>=100?'#4ade80':'#f59e0b';
+  var h='<div class="card cp" style="margin-bottom:14px"><div class="ring-row"><div class="ring-box">'+ring(rp,110,8,rc)+'<div class="ring-txt"><div class="rnum">'+c.kcal+'</div><div class="rlbl">KCAL</div><div class="rlbl">/ '+TOT.kcal+'</div></div></div><div class="bars">'+mbar('PROTEIN',c.p,TOT.p,'#f59e0b')+mbar('CARBS',c.c,TOT.c,'#3b82f6')+mbar('FAT',c.f,TOT.f,'#ec4899')+'<div style="font-size:9px;color:#374151;margin-top:6px">TARGET: '+TOT.p+'g · '+TOT.c+'g · '+TOT.f+'g</div></div></div></div>';
+
+  M.forEach(function(meal){
+    var done=md(meal,data),cnt=meal.items.filter(function(_,i){return data[meal.id+'-'+i]}).length,isOpen=EX===meal.id,pp=cnt/meal.items.length*100;
+    h+='<div class="card'+(done?' dglow':'')+'" style="margin-bottom:10px">';
+    h+='<div class="mhdr" onclick="toggleMeal(\''+meal.id+'\')">';
+    h+='<div class="micon'+(done?' done')+'">'+(done?'✓':meal.emoji)+'</div>';
+    h+='<div style="flex:1"><div><span class="mnm'+(done?' done')+'">'+meal.label+'</span><span class="mtm">'+meal.time.toUpperCase()+'</span></div>';
+    h+='<div class="mmac"><span class="kc">'+meal.kcal+' kcal</span> · P '+meal.protein+'g · C '+meal.carbs+'g · F '+meal.fat+'g</div></div>';
+    h+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="mcnt'+(done?' done')+'">'+cnt+'/'+meal.items.length+'</div><span style="color:#4b5563;font-size:11px;transition:transform .25s;display:inline-block;transform:'+(isOpen?'rotate(180deg)':'none')+'">▼</span></div></div>';
+    h+='<div class="mprog"><div class="mpf" style="width:'+pp+'%;background:'+(done?'#4ade80':'#f59e0b')+'"></div></div>';
+    if(isOpen){meal.items.forEach(function(item,i){var k=meal.id+'-'+i,t=!!data[k];h+='<div class="item'+(t?' tk':'')+'" onclick="toggleItem(\''+meal.id+'\','+i+')">'+'<div class="chk'+(t?' on')+'">'+(t?'✓':'')+'</div>'+'<div><div class="inm'+(t?' tk')+'">'+item.n+'</div><div class="idt">'+item.d+'</div></div></div>'})}
+    h+='</div>';
+  });
+
+  h+='<div class="card cp"><div class="stitle">SUPPLEMENTS</div>';
+  S.forEach(function(s,i){var k='supp-'+i,done=!!data[k];h+='<div class="supp" onclick="toggleSupp('+i+')">'+'<div class="schk'+(done?' on')+'">'+(done?'✓':'')+'</div>'+'<span style="font-size:12px">'+s.e+'</span>'+'<div><div class="snm'+(done?' done')+'">'+s.n+'</div><div class="sdt">'+s.d+'</div></div></div>'});
+  h+='</div>';
+  if(M.filter(function(m){return md(m,data)}).length===4){h+='<div class="banner"><div class="btitle">🏆 DAY COMPLETE</div><div class="bsub">All '+TOT.kcal+' kcal fuelled. Recovery mode on.</div></div>'}
+  return h;
+}
+
+function renderHistory(){
+  var isT=HD===tk(),hd=ld(HD),d=new Date(HD+'T12:00:00');
+  var dl=isT?'TODAY':d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}).toUpperCase();
+  var h='<div class="card cp" style="margin-bottom:13px"><div class="navrow"><button class="nbtn" onclick="shiftDay(-1)">‹</button><div class="navc"><div class="navd'+(isT?' td')+'">'+dl+'</div><div class="navk">'+HD+'</div></div><button class="nbtn" onclick="shiftDay(1)"'+(isT?' disabled':'')+'>›</button></div><button class="caltog" onclick="toggleCal()">'+(SC?'▲ HIDE CALENDAR':'▼ OPEN CALENDAR')+'</button></div>';
+
+  if(SC){
+    var yr=CM.getFullYear(),mo=CM.getMonth(),ml=CM.toLocaleDateString('en-GB',{month:'long',year:'numeric'}).toUpperCase();
+    var fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),today=tk();
+    var cells='';
+    for(var i=0;i<fd;i++)cells+='<div></div>';
+    for(var day=1;day<=dim;day++){
+      var d2=new Date(yr,mo,day),dk=fk(d2),data2=ld(dk),s2=ds(data2),hd2=Object.keys(data2).length>0;
+      var fut=dk>today,sel=dk===HD,isT2=dk===today;
+      cells+='<div class="calday'+(sel?' sel':'')+(isT2?' tod':'')+(fut?' fut':'')+'" onclick="selDay(\''+dk+'\')" style="color:'+(hd2?sc(s2):'#4b5563')+';font-weight:'+(isT2?700:400)+'">'+day+(hd2?'<div class="caldot" style="background:'+sc(s2)+'"></div>':'')+'</div>';
+    }
+    h+='<div class="calwrap"><div class="calh"><button class="calnb" onclick="shiftCal(-1)">‹</button><div class="calm">'+ml+'</div><button class="calnb" onclick="shiftCal(1)">›</button></div><div class="calgrid" style="margin-bottom:4px">'+['S','M','T','W','T','F','S'].map(function(x){return'<div class="caldl">'+x+'</div>'}).join('')+'</div><div class="calgrid">'+cells+'</div><div class="leg">'+[['#4ade80','≥80%'],['#f59e0b','50-79%'],['#f87171','<50%']].map(function(x){return'<div class="legi"><div class="legd" style="background:'+x[0]+'"></div>'+x[1]+'</div>'}).join('')+'</div></div>';
+  }
+
+  if(!Object.keys(hd).length){return h+'<div class="card"><div class="empty"><div class="eic">📭</div><div class="et">NO DATA</div><div class="es">No tracking found for this day</div></div></div>'}
+  var s=ds(hd),tot=Object.values(hd).filter(Boolean).length,mdone=M.filter(function(m){return md(m,hd)}).length;
+  var sl=s>=80?'GREAT DAY 💪':s>=50?'PARTIAL DAY':'MISSED DAY';
+  h+='<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:13px"><div class="scrwrap">'+ring(s,74,7,sc(s))+'<div class="scrinn"><div style="font-size:19px;font-weight:900;color:#f9fafb;line-height:1">'+s+'%</div><div style="font-size:8px;color:#6b7280">SCORE</div></div></div><div><div style="font-size:18px;font-weight:900;color:'+sc(s)+';letter-spacing:1px">'+sl+'</div><div style="font-size:10px;color:#6b7280;margin-top:3px">'+tot+' / '+TC+' items done</div><div style="font-size:10px;color:#4b5563;margin-top:2px">'+mdone+' / '+M.length+' meals complete</div></div></div>';
+  h+='<div class="card" style="margin-bottom:10px">';
+  M.forEach(function(meal){var done=md(meal,hd),cnt=meal.items.filter(function(_,i){return hd[meal.id+'-'+i]}).length;h+='<div class="hrow"><div style="font-size:17px">'+(done?'✅':meal.emoji)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:'+(done?'#4ade80':'#9ca3af')+';letter-spacing:1px">'+meal.label+'</div><div style="font-size:9px;color:#4b5563">'+cnt+'/'+meal.items.length+' items</div></div><div class="minibar"><div class="minif" style="width:'+(cnt/meal.items.length*100)+'%;background:'+(done?'#4ade80':'#f59e0b')+'"></div></div></div>'});
+  h+='</div><div class="card cp"><div class="stitle">SUPPLEMENTS</div>';
+  S.forEach(function(s2,i){var done=!!hd['supp-'+i];h+='<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-top:'+(i>0?'1px solid #111827':'none')+'"><span style="font-size:10px">'+(done?'✅':'⬜')+'</span><span style="font-size:12px;color:'+(done?'#6b7280':'#d1d5db')+';text-decoration:'+(done?'line-through':'none')+'">'+s2.e+' '+s2.n+'</span></div>'});
+  h+='</div>';
+  return h;
+}
+
+function renderProgress(){
+  var td=ld(tk()),ts=ds(td),st=streak(),week=period(7),month=period(30);
+  var h='<div class="sgrid"><div class="sc"><div class="sv" style="color:'+(st>0?'#f59e0b':'#4b5563')+'">'+st+'d</div><div class="sl">STREAK</div><div class="ss">≥80% days</div></div><div class="sc"><div class="sv" style="color:#3b82f6">'+avg(week)+'%</div><div class="sl">WEEK AVG</div><div class="ss">'+week.filter(function(s){return s.has}).length+'/7 tracked</div></div><div class="sc"><div class="sv" style="color:#818cf8">'+avg(month)+'%</div><div class="sl">MONTH AVG</div><div class="ss">'+month.filter(function(s){return s.has}).length+'/30 tracked</div></div></div>';
+  var tdn=Object.values(td).filter(Boolean).length;
+  h+='<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:13px"><div class="scrwrap">'+ring(ts,70,7,sc(ts))+'<div class="scrinn"><div style="font-size:18px;font-weight:900;color:#f9fafb;line-height:1">'+ts+'%</div><div style="font-size:8px;color:#6b7280">TODAY</div></div></div><div style="flex:1"><div style="font-size:17px;font-weight:800;color:#f9fafb">'+ts+'% COMPLETE</div><div style="font-size:10px;color:#6b7280;margin-top:3px">'+tdn+' / '+TC+' checked</div><div class="track" style="margin-top:7px"><div class="fill" style="width:'+ts+'%;background:'+sc(ts)+'"></div></div></div></div>';
+  h+='<div class="card cp" style="margin-bottom:10px"><div class="stitle">LAST 7 DAYS</div><div class="barchart">';
+  week.forEach(function(s){var ht=s.has?Math.max(s.score/100*68,4):4,isT=fk(s.date)===tk();h+='<div class="bc"><div class="bcs" style="color:'+(s.has?sc(s.score):'#374151')+'">'+(s.has?s.score:'-')+'</div><div class="bcb" style="height:'+ht+'px;background:'+(s.has?sc(s.score):'#1f2937')+';opacity:'+(isT?1:.75)+'"></div><div class="bcd'+(isT?' t')+'">'+s.date.toLocaleDateString('en-GB',{weekday:'short'}).slice(0,2).toUpperCase()+'</div></div>'});
+  h+='</div></div>';
+  h+='<div class="card cp" style="margin-bottom:10px"><div class="stitle">LAST 30 DAYS</div><div class="hmap">';
+  month.forEach(function(s){h+='<div class="hc" style="background:'+(s.has?sc(s.score):'#111827')+';opacity:'+(s.has?.85:.4)+'" onclick="goHist(\''+fk(s.date)+'\')"></div>'});
+  h+='</div><div class="leg" style="margin-top:8px">'+[['#4ade80','Great'],['#f59e0b','OK'],['#f87171','Low']].map(function(x){return'<div class="legi"><div class="legd" style="background:'+x[0]+'"></div>'+x[1]+'</div>'}).join('')+'</div></div>';
+  h+='<div class="card cp"><div class="stitle">MEAL COMPLETION · 7 DAYS</div>';
+  var wd=week.filter(function(s){return s.has});
+  M.forEach(function(meal){var rate=wd.length===0?0:Math.round(wd.filter(function(s){return md(meal,ld(fk(s.date)))}).length/wd.length*100);h+='<div class="msrow"><div class="msh"><span style="color:#9ca3af">'+meal.emoji+' '+meal.label.toUpperCase()+'</span><span style="color:'+sc(rate)+'">'+rate+'%</span></div><div class="track"><div class="fill" style="width:'+rate+'%;background:'+sc(rate)+'"></div></div></div>'});
+  h+='</div>';
+  return h;
+}
+
+function render(){
+  var p=document.getElementById(CT);
+  if(!p)return;
+  if(CT==='today')p.innerHTML=renderToday();
+  else if(CT==='history')p.innerHTML=renderHistory();
+  else p.innerHTML=renderProgress();
+}
+
+function updateClock(){
+  var now=new Date();
+  var ts=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  var ds2=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+  var st=streak(),dm=M.filter(function(m){return md(m,ld(tk()))}).length;
+  var ht=document.getElementById('htime'),hd=document.getElementById('hdate'),hm=document.getElementById('hmeals');
+  if(ht)ht.textContent=ts;
+  if(hd)hd.textContent=ds2;
+  if(hm)hm.textContent=dm+'/'+M.length+' MEALS · '+(st>0?'🔥 '+st+'d streak':'start your streak!');
+  if(now.getHours()===0&&now.getMinutes()===0)render();
+}
+
+updateClock();
+render();
+setInterval(function(){updateClock();if(CT==='today')render()},60000);
+</script>
+</body>
+</html>
