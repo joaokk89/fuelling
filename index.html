@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fuel Log">
+<title>Fuel Log</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#030712;color:#f9fafb;font-family:'DM Sans',Arial,sans-serif;overflow-x:hidden}
+body{padding-bottom:40px}
+.hdr{background:linear-gradient(180deg,#0f172a 0%,#030712 100%);border-bottom:1px solid #111827;padding:16px 16px 0;position:sticky;top:0;z-index:100}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.logo{font-family:'Bebas Neue',Impact,sans-serif;font-size:28px;letter-spacing:.08em;color:#f9fafb;line-height:1}
+.hdr-date{font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:.04em}
+.hdr-time{font-family:'Bebas Neue',Impact,sans-serif;font-size:24px;color:#f9fafb;letter-spacing:.05em;text-align:right}
+.hdr-meals{font-size:10px;color:#4ade80;font-family:'DM Mono',monospace;text-align:right}
+.tabs{display:flex;border-top:1px solid #111827}
+.tab{flex:1;padding:10px 0;font-family:'Bebas Neue',Impact,sans-serif;font-size:14px;letter-spacing:.08em;border:none;cursor:pointer;background:transparent;color:#4b5563;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{background:#0f172a;color:#f9fafb;border-bottom:2px solid #f59e0b}
+.page{display:none;max-width:480px;margin:0 auto;padding:16px 14px 60px}
+.page.active{display:block}
+.card{background:#0f172a;border:1px solid #1f2937;border-radius:14px;margin-bottom:12px;overflow:hidden}
+.cp{padding:16px}
+.ring-row{display:flex;gap:16px;align-items:center}
+.ring-box{position:relative;flex-shrink:0;width:110px;height:110px}
+.ring-box svg{position:absolute;top:0;left:0}
+.ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num{font-family:'Bebas Neue',Impact,sans-serif;font-size:24px;color:#f9fafb;line-height:1}
+.ring-lbl{font-size:9px;color:#6b7280;font-family:'DM Mono',monospace}
+.mbar{margin-bottom:9px}
+.mbar-h{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;margin-bottom:3px}
+.mbar-l{color:#9ca3af;text-transform:uppercase}
+.mbar-v{color:#f9fafb}
+.track{height:5px;background:#1f2937;border-radius:3px;overflow:hidden}
+.fill{height:100%;border-radius:3px;transition:width .5s}
+.tgt{font-size:9px;color:#374151;font-family:'DM Mono',monospace;margin-top:6px}
+.meal-hdr{padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;user-select:none;-webkit-user-select:none}
+.meal-icon{width:42px;height:42px;border-radius:11px;background:#111827;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;border:1px solid #1f2937}
+.meal-icon.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.2)}
+.meal-nm{font-family:'Bebas Neue',Impact,sans-serif;font-size:19px;letter-spacing:.06em;color:#f9fafb}
+.meal-nm.done{color:#4ade80}
+.meal-tm{font-size:9px;color:#6b7280;font-family:'DM Mono',monospace;margin-left:6px}
+.meal-mac{font-size:10px;color:#6b7280;margin-top:2px;font-family:'DM Mono',monospace}
+.meal-mac .kc{color:#9ca3af}
+.meal-cnt{font-size:10px;font-family:'DM Mono',monospace;color:#6b7280}
+.meal-cnt.done{color:#4ade80}
+.chev{color:#4b5563;font-size:11px;transition:transform .25s;display:inline-block}
+.chev.open{transform:rotate(180deg)}
+.mprog{height:2px;background:#111827}
+.mprog-f{height:100%;transition:width .4s}
+.done-glow{box-shadow:0 0 0 1px rgba(74,222,128,.3),0 4px 20px rgba(74,222,128,.06);border-color:rgba(74,222,128,.25)!important;background:rgba(4,120,87,.08)!important}
+.item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid #111827;cursor:pointer;-webkit-user-select:none}
+.item:active{background:rgba(255,255,255,.04)}
+.item.ticked{background:rgba(74,222,128,.04)}
+.chk{width:22px;height:22px;border-radius:50%;flex-shrink:0;border:2px solid #374151;background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chk.on{border-color:#4ade80;background:#4ade80}
+.chk-tick{color:#030712;font-size:11px;font-weight:700;display:none}
+.chk.on .chk-tick{display:block}
+.i-nm{font-size:14px;color:#e5e7eb;font-weight:500}
+.i-nm.ticked{color:#6b7280;text-decoration:line-through}
+.i-dt{font-size:10px;color:#4b5563;font-family:'DM Mono',monospace;margin-top:1px}
+.sec-ttl{font-family:'Bebas Neue',Impact,sans-serif;font-size:15px;letter-spacing:.08em;color:#6b7280;margin-bottom:10px}
+.supp{display:flex;align-items:center;gap:11px;padding:8px 0;border-top:1px solid #111827;cursor:pointer;-webkit-user-select:none}
+.supp:first-of-type{border-top:none}
+.schk{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid #374151;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.schk.on{border-color:#818cf8;background:#818cf8}
+.schk .chk-tick{display:none}
+.schk.on .chk-tick{display:block}
+.s-nm{font-size:13px;color:#d1d5db}
+.s-nm.done{color:#6b7280;text-decoration:line-through}
+.s-dt{font-size:10px;color:#4b5563;font-family:'DM Mono',monospace}
+.done-banner{padding:14px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);border-radius:14px;text-align:center;margin-top:14px}
+.done-ttl{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;color:#4ade80;letter-spacing:.1em}
+.done-sub{font-size:11px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:4px}
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nbtn{width:36px;height:36px;border-radius:8px;border:1px solid #1f2937;background:#111827;color:#9ca3af;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nbtn:disabled{color:#1f2937;background:#0a0f1a;cursor:default}
+.nav-c{text-align:center}
+.nav-d{font-family:'Bebas Neue',Impact,sans-serif;font-size:17px;letter-spacing:.06em;color:#f9fafb}
+.nav-d.today{color:#4ade80}
+.nav-k{font-size:10px;color:#6b7280;font-family:'DM Mono',monospace}
+.cal-tog{width:100%;padding:8px;background:#111827;border:1px solid #1f2937;border-radius:8px;color:#9ca3af;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:.05em}
+.cal-wrap{background:#0f172a;border:1px solid #1f2937;border-radius:14px;padding:14px;margin-bottom:14px}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-m{font-family:'Bebas Neue',Impact,sans-serif;font-size:15px;letter-spacing:.08em;color:#f9fafb}
+.cal-nb{width:28px;height:28px;border-radius:6px;border:1px solid #1f2937;background:#111827;color:#9ca3af;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dl{text-align:center;font-size:8px;color:#4b5563;font-family:'DM Mono',monospace;padding-bottom:4px}
+.cal-day{aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent}
+.cal-day.sel{background:rgba(245,158,11,.15);border-color:#f59e0b}
+.cal-day.tod{border-color:#374151}
+.cal-day.fut{opacity:.2;pointer-events:none}
+.cal-dn{font-size:10px;color:#4b5563}
+.cal-dot{width:4px;height:4px;border-radius:50%;margin-top:1px}
+.leg{display:flex;gap:10px;margin-top:10px;justify-content:center;flex-wrap:wrap}
+.leg-i{display:flex;align-items:center;gap:4px;font-size:8px;color:#6b7280;font-family:'DM Mono',monospace}
+.leg-d{width:6px;height:6px;border-radius:50%}
+.empty{padding:28px 14px;text-align:center}
+.empty-ic{font-size:30px;margin-bottom:8px}
+.empty-t{font-family:'Bebas Neue',Impact,sans-serif;font-size:17px;color:#4b5563;letter-spacing:.06em}
+.empty-s{font-size:10px;color:#374151;font-family:'DM Mono',monospace;margin-top:4px}
+.sc-wrap{position:relative;flex-shrink:0}
+.sc-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sc-pct{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;color:#f9fafb;line-height:1}
+.sc-lbl{font-size:8px;color:#6b7280;font-family:'DM Mono',monospace}
+.hr-meal{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #111827}
+.hr-meal:last-child{border-bottom:none}
+.mini-bar{width:44px;height:5px;background:#1f2937;border-radius:3px;overflow:hidden;flex-shrink:0}
+.mini-fill{height:100%;border-radius:3px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-c{background:#0f172a;border:1px solid #1f2937;border-radius:11px;padding:12px 8px;text-align:center}
+.stat-v{font-family:'Bebas Neue',Impact,sans-serif;font-size:24px;line-height:1}
+.stat-l{font-size:8px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:.05em}
+.stat-s{font-size:8px;color:#374151;font-family:'DM Mono',monospace;margin-top:2px}
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:80px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bc-s{font-size:8px;font-family:'DM Mono',monospace}
+.bc-b{width:100%;border-radius:3px 3px 0 0}
+.bc-d{font-size:7px;font-family:'DM Mono',monospace;color:#4b5563}
+.bc-d.t{color:#f9fafb}
+.hmap{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.hc{aspect-ratio:1;border-radius:3px;cursor:pointer}
+.ms-row{margin-bottom:9px}
+.ms-h{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;margin-bottom:3px}
+.save-pill{font-size:9px;color:#4ade80;font-family:'DM Mono',monospace;background:rgba(74,222,128,.1);padding:2px 6px;border-radius:4px;margin-left:6px;display:none}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="logo">FUEL LOG</div>
+      <div class="hdr-date" id="hDate"></div>
+    </div>
+    <div>
+      <div class="hdr-time" id="hTime"></div>
+      <div class="hdr-meals" id="hStreak"></div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('today',this)">TODAY</button>
+    <button class="tab" onclick="switchTab('history',this)">HISTORY</button>
+    <button class="tab" onclick="switchTab('progress',this)">PROGRESS</button>
+  </div>
+</div>
+
+<div class="page active" id="page-today"></div>
+<div class="page" id="page-history"></div>
+<div class="page" id="page-progress"></div>
+
+<script>
+var MEALS=[
+  {id:'breakfast',label:'Breakfast',emoji:'🌅',time:'Morning',kcal:920,protein:72,carbs:95,fat:24,items:[
+    {name:'2 eggs + 1 egg white',detail:'whole eggs + white'},
+    {name:'320 ml egg whites',detail:'liquid egg whites'},
+    {name:'Halloumi',detail:'2 slices · 40 g'},
+    {name:'Jam',detail:'20 g'},
+    {name:'Peanut butter',detail:'20 g'},
+    {name:'Bread',detail:'3 slices · 90 g'},
+    {name:'Nestum rice',detail:'30 g'},
+    {name:'Kiwis',detail:'2 units'}
+  ]},
+  {id:'lunch',label:'Lunch',emoji:'☀️',time:'Midday',kcal:870,protein:55,carbs:138,fat:8,items:[
+    {name:'Broccoli',detail:'150 g'},
+    {name:'Chicken breast',detail:'150 g'},
+    {name:'Basmati rice (cooked)',detail:'400 g'},
+    {name:'Banana',detail:'1 unit'}
+  ]},
+  {id:'snack',label:'Snack',emoji:'⚡',time:'Post-Training',kcal:870,protein:48,carbs:105,fat:30,items:[
+    {name:'Chicken breast',detail:'150 g'},
+    {name:'Brazil nuts',detail:'3 units'},
+    {name:'Walnuts',detail:'3 units'},
+    {name:'Bananas',detail:'2 units'},
+    {name:'Basmati rice (cooked)',detail:'150 g'}
+  ]},
+  {id:'dinner',label:'Dinner',emoji:'🌙',time:'Evening',kcal:830,protein:55,carbs:55,fat:32,items:[
+    {name:'Greens',detail:'150 g'},
+    {name:'Chicken breast',detail:'150 g'},
+    {name:'Olive oil',detail:'2 tbsp'},
+    {name:'Alpro Soy Yogurt',detail:'natural'},
+    {name:'Red fruits',detail:'1 portion'},
+    {name:'Mackerel in olive oil',detail:'1 can · Auchan cavala'},
+    {name:'Honey',detail:'1 tsp'}
+  ]}
+];
+var SUPPS=[
+  {name:'Morning — Stack 1',detail:'Magnesium · Vitamin Complex · Glycine',emoji:'🌄'},
+  {name:'Morning — Drops',detail:'Vitamin D3 10,000UI · Retinol · K2 MK7',emoji:'💧'},
+  {name:'Afternoon',detail:'Creatine · Omega-3 · Vitamin C',emoji:'⚡'},
+  {name:'Late Night',detail:'Magnesium · Glycine',emoji:'🌙'}
+];
+var TOTAL={kcal:3490,protein:230,carbs:393,fat:94};
+var TOTAL_CHECKS=MEALS.reduce(function(a,m){return a+m.items.length},0)+SUPPS.length;
+var expandedMeal=null;
+var histDate=todayKey();
+var showCal=false;
+var calMonth=new Date();
+var currentTab='today';
+
+function todayKey(){return fmtKey(new Date())}
+function fmtKey(d){
+  var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+dd;
+}
+function loadDay(k){try{return JSON.parse(localStorage.getItem('fl-'+k)||'{}')}catch(e){return{}}}
+function saveDay(k,data){try{localStorage.setItem('fl-'+k,JSON.stringify(data));showSave()}catch(e){}}
+function showSave(){
+  var p=document.getElementById('savePill');
+  if(p){p.style.display='inline';clearTimeout(window._st);window._st=setTimeout(function(){p.style.display='none'},1500)}
+}
+function dayScore(data){
+  if(!data||!Object.keys(data).length)return 0;
+  return Math.round(Object.values(data).filter(Boolean).length/TOTAL_CHECKS*100);
+}
+function scoreColor(s){return s>=80?'#4ade80':s>=50?'#f59e0b':s>0?'#f87171':'#1f2937'}
+function mealDone(meal,data){return meal.items.every(function(_,i){return data[meal.id+'-'+i]})}
+function consumed(data){
+  return MEALS.reduce(function(acc,meal){
+    if(mealDone(meal,data)){acc.kcal+=meal.kcal;acc.protein+=meal.protein;acc.carbs+=meal.carbs;acc.fat+=meal.fat}
+    return acc;
+  },{kcal:0,protein:0,carbs:0,fat:0});
+}
+function ring(pct,size,sw,color){
+  var r=(size-sw*2)/2,circ=2*Math.PI*r,dash=(pct/100)*circ;
+  return '<svg width="'+size+'" height="'+size+'" style="transform:rotate(-90deg);display:block"><circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="#1f2937" stroke-width="'+sw+'"/><circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'"/></svg>';
+}
+function mbar(label,val,max,color){
+  var pct=Math.min(val/max*100,100);
+  return '<div class="mbar"><div class="mbar-h"><span class="mbar-l">'+label+'</span><span class="mbar-v">'+val+'g</span></div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+color+'"></div></div></div>';
+}
+function getStreak(){
+  var s=0;
+  for(var i=0;i<365;i++){
+    var d=new Date();d.setDate(d.getDate()-i);
+    if(dayScore(loadDay(fmtKey(d)))>=80)s++;
+    else if(i>0)break;
+  }
+  return s;
+}
+function getPeriod(days){
+  var out=[];
+  for(var i=days-1;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);
+    var data=loadDay(fmtKey(d));
+    out.push({date:d,score:dayScore(data),hasData:Object.keys(data).length>0});
+  }
+  return out;
+}
+function avg(arr){
+  var w=arr.filter(function(s){return s.hasData});
+  if(!w.length)return 0;
+  return Math.round(w.reduce(function(a,s){return a+s.score},0)/w.length);
+}
+
+function renderToday(){
+  var data=loadDay(todayKey());
+  var c=consumed(data);
+  var rp=Math.min(c.kcal/TOTAL.kcal*100,100);
+  var rc=rp>=100?'#4ade80':'#f59e0b';
+  var html='<div class="card cp" style="margin-bottom:14px"><div class="ring-row"><div class="ring-box">'+ring(rp,110,8,rc)+'<div class="ring-txt"><div class="ring-num">'+c.kcal+'</div><div class="ring-lbl">KCAL</div><div class="ring-lbl">/ '+TOTAL.kcal+'</div></div></div><div style="flex:1">'+mbar('Protein',c.protein,TOTAL.protein,'#f59e0b')+mbar('Carbs',c.carbs,TOTAL.carbs,'#3b82f6')+mbar('Fat',c.fat,TOTAL.fat,'#ec4899')+'<div class="tgt">TARGET: '+TOTAL.protein+'g · '+TOTAL.carbs+'g · '+TOTAL.fat+'g</div></div></div></div>';
+
+  MEALS.forEach(function(meal){
+    var done=mealDone(meal,data);
+    var cnt=meal.items.filter(function(_,i){return data[meal.id+'-'+i]}).length;
+    var isOpen=expandedMeal===meal.id;
+    var pp=(cnt/meal.items.length*100);
+    html+='<div class="card'+(done?' done-glow':'')+'" style="margin-bottom:10px">';
+    html+='<div class="meal-hdr" onclick="toggleMeal(''+meal.id+'')">';
+    html+='<div class="meal-icon'+(done?' done')+'">'+(done?'✓':meal.emoji)+'</div>';
+    html+='<div style="flex:1"><div><span class="meal-nm'+(done?' done')+'">'+meal.label+'</span><span class="meal-tm">'+meal.time.toUpperCase()+'</span></div>';
+    html+='<div class="meal-mac"><span class="kc">'+meal.kcal+' kcal</span> · P '+meal.protein+'g · C '+meal.carbs+'g · F '+meal.fat+'g</div></div>';
+    html+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="meal-cnt'+(done?' done')+'">'+cnt+'/'+meal.items.length+'</div><span class="chev'+(isOpen?' open')+'">▼</span></div></div>';
+    html+='<div class="mprog"><div class="mprog-f" style="width:'+pp+'%;background:'+(done?'#4ade80':'#f59e0b')+'"></div></div>';
+    if(isOpen){
+      meal.items.forEach(function(item,i){
+        var k=meal.id+'-'+i,t=!!data[k];
+        html+='<div class="item'+(t?' ticked':'')+'" onclick="toggleItem(''+meal.id+'','+i+')">';
+        html+='<div class="chk'+(t?' on')+'"><span class="chk-tick">✓</span></div>';
+        html+='<div><div class="i-nm'+(t?' ticked')+'">'+item.name+'</div><div class="i-dt">'+item.detail+'</div></div></div>';
+      });
+    }
+    html+='</div>';
+  });
+
+  html+='<div class="card cp"><div class="sec-ttl">SUPPLEMENTS</div>';
+  SUPPS.forEach(function(s,i){
+    var k='supp-'+i,done=!!data[k];
+    html+='<div class="supp" onclick="toggleSupp('+i+')">';
+    html+='<div class="schk'+(done?' on')+'"><span class="chk-tick">✓</span></div>';
+    html+='<span style="font-size:12px">'+s.emoji+'</span>';
+    html+='<div><div class="s-nm'+(done?' done')+'">'+s.name+'</div><div class="s-dt">'+s.detail+'</div></div></div>';
+  });
+  html+='</div>';
+
+  if(MEALS.filter(function(m){return mealDone(m,data)}).length===4){
+    html+='<div class="done-banner"><div class="done-ttl">🏆 DAY COMPLETE</div><div class="done-sub">All '+TOTAL.kcal+' kcal fuelled. Recovery mode on.</div></div>';
+  }
+  return html;
+}
+
+function renderHistory(){
+  var isToday=histDate===todayKey();
+  var histData=loadDay(histDate);
+  var d=new Date(histDate+'T12:00:00');
+  var dl=isToday?'TODAY':d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'}).toUpperCase();
+  var html='<div class="card cp" style="margin-bottom:14px"><div class="nav-row"><button class="nbtn" onclick="shiftDay(-1)">‹</button><div class="nav-c"><div class="nav-d'+(isToday?' today')+'">'+dl+'</div><div class="nav-k">'+histDate+'</div></div><button class="nbtn" onclick="shiftDay(1)"'+(isToday?' disabled':'')+'>›</button></div><button class="cal-tog" onclick="toggleCal()">'+(showCal?'▲ HIDE CALENDAR':'▼ OPEN CALENDAR')+'</button></div>';
+
+  if(showCal){
+    var yr=calMonth.getFullYear(),mo=calMonth.getMonth();
+    var ml=calMonth.toLocaleDateString('en-GB',{month:'long',year:'numeric'}).toUpperCase();
+    var fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),today=todayKey();
+    var cells='';
+    for(var i=0;i<fd;i++)cells+='<div></div>';
+    for(var day=1;day<=dim;day++){
+      var d2=new Date(yr,mo,day),dk=fmtKey(d2);
+      var sc=dayScore(loadDay(dk)),hd=Object.keys(loadDay(dk)).length>0;
+      var fut=dk>today,sel=dk===histDate,isT=dk===today;
+      cells+='<div class="cal-day'+(sel?' sel':'')+(isT?' tod':'')+(fut?' fut':'')+'" onclick="selDay(''+dk+'')">';
+      cells+='<span class="cal-dn" style="color:'+(hd?scoreColor(sc):'#4b5563')+';font-weight:'+(isT?700:400)+'">'+day+'</span>';
+      if(hd)cells+='<div class="cal-dot" style="background:'+scoreColor(sc)+'"></div>';
+      cells+='</div>';
+    }
+    html+='<div class="cal-wrap"><div class="cal-h"><button class="cal-nb" onclick="shiftCal(-1)">‹</button><div class="cal-m">'+ml+'</div><button class="cal-nb" onclick="shiftCal(1)">›</button></div><div class="cal-grid" style="margin-bottom:5px">'+['S','M','T','W','T','F','S'].map(function(d){return'<div class="cal-dl">'+d+'</div>'}).join('')+'</div><div class="cal-grid">'+cells+'</div><div class="leg">'+[['#4ade80','≥80%'],['#f59e0b','50-79%'],['#f87171','<50%'],['#4b5563','No data']].map(function(x){return'<div class="leg-i"><div class="leg-d" style="background:'+x[0]+'"></div>'+x[1]+'</div>'}).join('')+'</div></div>';
+  }
+
+  if(!Object.keys(histData).length){
+    html+='<div class="card"><div class="empty"><div class="empty-ic">📭</div><div class="empty-t">NO DATA FOR THIS DAY</div><div class="empty-s">Track daily to build history</div></div></div>';
+    return html;
+  }
+  var sc=dayScore(histData),tot=Object.values(histData).filter(Boolean).length,md=MEALS.filter(function(m){return mealDone(m,histData)}).length;
+  var sl=sc>=80?'GREAT DAY 💪':sc>=50?'PARTIAL DAY':'MISSED DAY';
+  html+='<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:14px"><div class="sc-wrap">'+ring(sc,76,7,scoreColor(sc))+'<div class="sc-inner"><div class="sc-pct">'+sc+'%</div><div class="sc-lbl">SCORE</div></div></div><div><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;color:'+scoreColor(sc)+';letter-spacing:.06em">'+sl+'</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:3px">'+tot+' / '+TOTAL_CHECKS+' items</div><div style="font-size:10px;color:#4b5563;font-family:'DM Mono',monospace;margin-top:2px">'+md+' / '+MEALS.length+' meals done</div></div></div>';
+  html+='<div class="card" style="margin-bottom:10px">';
+  MEALS.forEach(function(meal){
+    var done=mealDone(meal,histData),cnt=meal.items.filter(function(_,i){return histData[meal.id+'-'+i]}).length;
+    html+='<div class="hr-meal"><div style="font-size:18px">'+(done?'✅':meal.emoji)+'</div><div style="flex:1"><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:15px;color:'+(done?'#4ade80':'#9ca3af')+';letter-spacing:.06em">'+meal.label+'</div><div style="font-size:9px;color:#4b5563;font-family:'DM Mono',monospace">'+cnt+'/'+meal.items.length+' items</div></div><div class="mini-bar"><div class="mini-fill" style="width:'+(cnt/meal.items.length*100)+'%;background:'+(done?'#4ade80':'#f59e0b')+'"></div></div></div>';
+  });
+  html+='</div><div class="card cp"><div class="sec-ttl">SUPPLEMENTS</div>';
+  SUPPS.forEach(function(s,i){
+    var done=!!histData['supp-'+i];
+    html+='<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-top:'+(i>0?'1px solid #111827':'none')+'"><span style="font-size:10px">'+(done?'✅':'⬜')+'</span><span style="font-size:12px;color:'+(done?'#6b7280':'#d1d5db')+';text-decoration:'+(done?'line-through':'none')+'">'+s.emoji+' '+s.name+'</span></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderProgress(){
+  var td=loadDay(todayKey()),ts=dayScore(td),streak=getStreak();
+  var week=getPeriod(7),month=getPeriod(30);
+  var html='<div class="stat-grid"><div class="stat-c"><div class="stat-v" style="color:'+(streak>0?'#f59e0b':'#4b5563')+'">'+streak+'d</div><div class="stat-l">STREAK</div><div class="stat-s">≥80% days</div></div><div class="stat-c"><div class="stat-v" style="color:#3b82f6">'+avg(week)+'%</div><div class="stat-l">THIS WEEK</div><div class="stat-s">'+week.filter(function(s){return s.hasData}).length+'/7 tracked</div></div><div class="stat-c"><div class="stat-v" style="color:#818cf8">'+avg(month)+'%</div><div class="stat-l">THIS MONTH</div><div class="stat-s">'+month.filter(function(s){return s.hasData}).length+'/30 tracked</div></div></div>';
+
+  var tdn=Object.values(td).filter(Boolean).length;
+  html+='<div class="card cp" style="margin-bottom:10px;display:flex;align-items:center;gap:14px"><div class="sc-wrap">'+ring(ts,70,7,scoreColor(ts))+'<div class="sc-inner"><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:18px;color:#f9fafb;line-height:1">'+ts+'%</div><div style="font-size:8px;color:#6b7280;font-family:'DM Mono',monospace">TODAY</div></div></div><div style="flex:1"><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:18px;color:#f9fafb">'+ts+'% COMPLETE</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:3px">'+tdn+' / '+TOTAL_CHECKS+' checked</div><div class="track" style="margin-top:7px"><div class="fill" style="width:'+ts+'%;background:'+scoreColor(ts)+'"></div></div></div></div>';
+
+  html+='<div class="card cp" style="margin-bottom:10px"><div class="sec-ttl">LAST 7 DAYS</div><div class="bar-chart">';
+  var maxH=68;
+  week.forEach(function(s){
+    var h=s.hasData?Math.max(s.score/100*maxH,4):4,isT=fmtKey(s.date)===todayKey();
+    html+='<div class="bc"><div class="bc-s" style="color:'+(s.hasData?scoreColor(s.score):'#374151')+'">'+(s.hasData?s.score:'-')+'</div><div class="bc-b" style="height:'+h+'px;background:'+(s.hasData?scoreColor(s.score):'#1f2937')+';opacity:'+(isT?1:.75)+';border:'+(isT?'1px solid '+scoreColor(s.score):'none')+'"></div><div class="bc-d'+(isT?' t')+'">'+s.date.toLocaleDateString('en-GB',{weekday:'short'}).slice(0,2).toUpperCase()+'</div></div>';
+  });
+  html+='</div></div>';
+
+  html+='<div class="card cp" style="margin-bottom:10px"><div class="sec-ttl">LAST 30 DAYS</div><div class="hmap">';
+  month.forEach(function(s){
+    html+='<div class="hc" title="'+fmtKey(s.date)+': '+(s.hasData?s.score+'%':'no data')+'" style="background:'+(s.hasData?scoreColor(s.score):'#111827')+';opacity:'+(s.hasData?.85:.4)+'" onclick="goHist(''+fmtKey(s.date)+'')"></div>';
+  });
+  html+='</div><div class="leg" style="margin-top:8px">'+[['#4ade80','Great (≥80%)'],['#f59e0b','OK (50-79%)'],['#f87171','Low (<50%)']].map(function(x){return'<div class="leg-i"><div class="leg-d" style="background:'+x[0]+';border-radius:2px;width:8px;height:8px"></div>'+x[1]+'</div>'}).join('')+'</div></div>';
+
+  html+='<div class="card cp"><div class="sec-ttl">MEAL COMPLETION · LAST 7 DAYS</div>';
+  var wd=week.filter(function(s){return s.hasData});
+  MEALS.forEach(function(meal){
+    var rate=wd.length===0?0:Math.round(wd.filter(function(s){return mealDone(meal,loadDay(fmtKey(s.date)))}).length/wd.length*100);
+    html+='<div class="ms-row"><div class="ms-h"><span style="color:#9ca3af">'+meal.emoji+' '+meal.label.toUpperCase()+'</span><span style="color:'+scoreColor(rate)+'">'+rate+'%</span></div><div class="track"><div class="fill" style="width:'+rate+'%;background:'+scoreColor(rate)+'"></div></div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function toggleMeal(id){expandedMeal=expandedMeal===id?null:id;render()}
+function toggleItem(mealId,idx){var k=mealId+'-'+idx,data=loadDay(todayKey());data[k]=!data[k];saveDay(todayKey(),data);render()}
+function toggleSupp(i){var k='supp-'+i,data=loadDay(todayKey());data[k]=!data[k];saveDay(todayKey(),data);render()}
+function shiftDay(n){var d=new Date(histDate+'T12:00:00');d.setDate(d.getDate()+n);var nk=fmtKey(d);if(nk<=todayKey()){histDate=nk;showCal=false;render()}}
+function toggleCal(){showCal=!showCal;render()}
+function shiftCal(n){var nm=new Date(calMonth.getFullYear(),calMonth.getMonth()+n,1);if(nm<=new Date()){calMonth=nm;render()}}
+function selDay(dk){histDate=dk;showCal=false;render()}
+function goHist(dk){histDate=dk;switchTab('history',document.querySelectorAll('.tab')[1])}
+
+function switchTab(t,btn){
+  currentTab=t;
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active')});
+  document.getElementById('page-'+t).classList.add('active');
+  render();
+}
+
+function updateClock(){
+  var now=new Date();
+  var ts=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  var ds=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+  var streak=getStreak();
+  var dm=MEALS.filter(function(m){return mealDone(m,loadDay(todayKey()))}).length;
+  var ht=document.getElementById('hTime'),hd=document.getElementById('hDate'),hs=document.getElementById('hStreak');
+  if(ht)ht.textContent=ts;
+  if(hd)hd.textContent=ds;
+  if(hs)hs.textContent=dm+'/'+MEALS.length+' MEALS · '+(streak>0?'🔥 '+streak+'d streak':'start streak!');
+  if(now.getHours()===0&&now.getMinutes()===0)render();
+}
+
+function render(){
+  var p=document.getElementById('page-'+currentTab);
+  if(!p)return;
+  if(currentTab==='today')p.innerHTML=renderToday();
+  else if(currentTab==='history')p.innerHTML=renderHistory();
+  else if(currentTab==='progress')p.innerHTML=renderProgress();
+}
+
+updateClock();
+render();
+setInterval(function(){updateClock();if(currentTab==='today')render()},60000);
+</script>
+</body>
+</html>
